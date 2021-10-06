@@ -1,24 +1,37 @@
-# README
+# maubank-rails
+This project provides the backend for a personal finance web application.
+The development tools are listed below.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+---
 
-Things you may want to cover:
+## Dependencies
+- [Ruby v3.0.2](https://www.ruby-lang.org/en/downloads/)
+- [Rails v6.1.4](https://guides.rubyonrails.org/getting_started.html)
+---
 
-* Ruby version
+## Set up
+First, install the gems required by the application:
+```bash
+bundle
+```
+Next, execute the database migrations/schema setup:
+```bash
+rails db:setup
+```
+---
 
-* System dependencies
+## Run application
+To run the server on port 3000:
 
-* Configuration
+```bash
+rails s
+```
+---
 
-* Database creation
+## Run tests
+Test suite is using [RSpec](https://rspec.info/). To run it do:
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```bash
+rails spec
+```
+---
