@@ -44,4 +44,4 @@ jobs:
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/maubank_rails_test
-        run: bin/rails test
+        run: bin/rails spec
