@@ -35,3 +35,11 @@ Test suite is using [RSpec](https://rspec.info/). To run it do:
 rails spec
 ```
 ---
+
+## Coverage
+To see test coverage, after run test suite, do:
+
+```bash
+xdg-open coverage/index.html
+```
+---
