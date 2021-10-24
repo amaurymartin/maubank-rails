@@ -10,3 +10,12 @@ AllCops:
     - 'config/**/*'
     - 'script/**/*'
     - 'bin/**'
+
+Layout/LineLength:
+  Max: 80
+
+Metrics/BlockLength:
+  IgnoredMethods: ['describe']
+
+Style/Documentation:
+  Enabled: false
