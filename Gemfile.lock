@@ -67,9 +67,11 @@ GEM
     builder (3.2.4)
     byebug (11.1.3)
     concurrent-ruby (1.1.9)
+    cpf_cnpj (0.5.0)
     crass (1.0.6)
     diff-lcs (1.4.4)
     docile (1.4.0)
+    email_data (1635641195.0.0)
     erubi (1.10.0)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
@@ -142,6 +144,9 @@ GEM
       ffi (~> 1.0)
     regexp_parser (2.1.1)
     rexml (3.2.5)
+    root_domain (0.1.2)
+      email_data
+      simpleidn
     rspec-core (3.10.1)
       rspec-support (~> 3.10.0)
     rspec-expectations (3.10.1)
@@ -187,6 +192,8 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.3)
+    simpleidn (0.2.1)
+      unf (~> 0.1.4)
     spring (3.0.0)
     sprockets (4.0.2)
       concurrent-ruby (~> 1.0)
@@ -198,7 +205,11 @@ GEM
     thor (1.1.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.8)
     unicode-display_width (2.0.0)
+    validators (3.4.1)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -211,12 +222,14 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   bootsnap (>= 1.4.4)
   byebug
+  cpf_cnpj
   factory_bot_rails
   faker
   listen (~> 3.3)
   pg (~> 1.1)
   puma (~> 5.0)
   rails (~> 6.1.4, >= 6.1.4.1)
+  root_domain
   rspec-rails
   rubocop
   rubocop-performance
@@ -225,6 +238,7 @@ DEPENDENCIES
   simplecov
   spring
   tzinfo-data
+  validators
 
 RUBY VERSION
    ruby 3.0.2p107
