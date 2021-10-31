@@ -3,6 +3,8 @@
 class User < ApplicationRecord
   include Keyable
 
+  has_many :wallets, dependent: :destroy
+
   validates :key, presence: true, uniqueness: true
   validates :full_name, presence: true, unless: -> { full_name.nil? }
   validates :nickname, presence: true

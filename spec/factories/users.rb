@@ -14,5 +14,9 @@ FactoryBot.define do
     trait :confirmed do
       after(:create, &:confirm!)
     end
+
+    trait :with_wallet do
+      after(:create) { |instance| create(:wallet, user: instance) }
+    end
   end
 end
