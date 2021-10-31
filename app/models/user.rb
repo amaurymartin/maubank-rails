@@ -18,7 +18,9 @@ class User < ApplicationRecord
             presence: true
   validates :documentation, presence: true, unless: -> { documentation.nil? }
   validates_cpf_format_of :documentation, if: lambda {
-    documentation.present? && ENV.fetch('ACCEPTS_ONLY_BRAZILIAN_CPF', true)
+    documentation.present? && ActiveModel::Type::Boolean.new.cast(
+      ENV.fetch('ACCEPTS_ONLY_BRAZILIAN_CPF', true)
+    )
   }
   validates :documentation, uniqueness: true, if: -> { documentation.present? }
   validates :confirmed_at, absence: true, if: -> { new_record? }

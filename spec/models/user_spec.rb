@@ -195,6 +195,14 @@ RSpec.describe User, type: :model do
       it { is_expected.to be_invalid }
     end
 
+    context 'when is not a brazilian CPF but allows other values' do
+      subject(:user) { build(:user, documentation: 'invalid') }
+
+      before { ENV['ACCEPTS_ONLY_BRAZILIAN_CPF'] = 'false' }
+
+      it { is_expected.to be_valid }
+    end
+
     context 'when nil one was already taken' do
       subject(:second_user) { build(:user, documentation: nil) }
 
