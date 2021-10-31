@@ -3,6 +3,7 @@
 class User < ApplicationRecord
   include Keyable
 
+  has_many :goals, dependent: :destroy
   has_many :wallets, dependent: :destroy
 
   validates :key, presence: true, uniqueness: true
