@@ -105,14 +105,4 @@ RSpec.describe Category, type: :model do
       it { is_expected.to be_valid }
     end
   end
-
-  describe 'dependent destroy' do
-    let(:user) { create(:user, :with_category) }
-    let(:user_categories) { user.categories }
-
-    it do
-      expect { user.destroy }.to change(described_class, :count)
-        .by(-user_categories.size)
-    end
-  end
 end

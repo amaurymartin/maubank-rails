@@ -161,14 +161,4 @@ RSpec.describe Goal, type: :model do
       it { is_expected.to be_invalid }
     end
   end
-
-  describe 'dependent destroy' do
-    let(:user) { create(:user, :with_goal) }
-    let(:user_goals) { user.goals }
-
-    it do
-      expect { user.destroy }.to change(described_class, :count)
-        .by(-user_goals.size)
-    end
-  end
 end
