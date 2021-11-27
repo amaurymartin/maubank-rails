@@ -294,4 +294,36 @@ RSpec.describe User, type: :model do
       it { is_expected.to be_confirmed }
     end
   end
+
+  describe 'dependent destroy' do
+    context 'with category' do
+      let(:user) { create(:user, :with_category) }
+      let(:user_categories) { user.categories }
+
+      it do
+        expect { user.destroy }.to change(described_class, :count)
+          .by(-user_categories.size)
+      end
+    end
+
+    context 'with goal' do
+      let(:user) { create(:user, :with_goal) }
+      let(:user_goals) { user.goals }
+
+      it do
+        expect { user.destroy }.to change(described_class, :count)
+          .by(-user_goals.size)
+      end
+    end
+
+    context 'with wallet' do
+      let(:user) { create(:user, :with_wallet) }
+      let(:user_wallets) { user.wallets }
+
+      it do
+        expect { user.destroy }.to change(described_class, :count)
+          .by(-user_wallets.size)
+      end
+    end
+  end
 end

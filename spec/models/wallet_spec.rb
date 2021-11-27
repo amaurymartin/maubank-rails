@@ -105,14 +105,4 @@ RSpec.describe Wallet, type: :model do
       it { is_expected.to be_valid }
     end
   end
-
-  describe 'dependent destroy' do
-    let(:user) { create(:user, :with_wallet) }
-    let(:user_wallets) { user.wallets }
-
-    it do
-      expect { user.destroy }.to change(described_class, :count)
-        .by(-user_wallets.size)
-    end
-  end
 end
