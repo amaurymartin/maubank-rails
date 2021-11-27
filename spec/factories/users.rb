@@ -15,6 +15,10 @@ FactoryBot.define do
       after(:create, &:confirm!)
     end
 
+    trait :with_category do
+      after(:create) { |instance| create(:category, user: instance) }
+    end
+
     trait :with_goal do
       after(:create) { |instance| create(:goal, user: instance) }
     end

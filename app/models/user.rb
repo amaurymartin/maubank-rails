@@ -3,6 +3,7 @@
 class User < ApplicationRecord
   include Keyable
 
+  has_many :categories, dependent: :destroy
   has_many :goals, dependent: :destroy
   has_many :wallets, dependent: :destroy
 
