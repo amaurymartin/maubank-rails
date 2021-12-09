@@ -19,6 +19,13 @@ class Budget < ApplicationRecord
 
   delegate :user, to: :category
 
+  scope :for, lambda { |date|
+    where('? BETWEEN starts_at AND ends_at', date)
+      .or(where('? >= starts_at', date).where(ends_at: nil))
+      .order(ends_at: :asc)
+      .limit(1)
+  }
+
   private
 
   def starts_at_cannot_be_in_the_past

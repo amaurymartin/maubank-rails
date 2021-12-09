@@ -3,11 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe Budget, type: :model do
-  subject(:budget) { build(:budget) }
-
-  before { budget.validate }
-
   describe '#validate' do
+    subject(:budget) { build(:budget) }
+
+    before { budget.validate }
+
     it { is_expected.to be_valid }
   end
 
@@ -269,6 +269,54 @@ RSpec.describe Budget, type: :model do
       end
 
       it { is_expected.to be_valid }
+    end
+  end
+
+  describe 'scopes' do
+    describe '.for' do
+      subject(:budgets_for_date) { described_class.for(date) }
+
+      let!(:first_budget) { create(:budget, ends_at: nil) }
+      let!(:second_budget) do
+        create(
+          :budget,
+          starts_at: Date.current + 1.month,
+          ends_at: Date.current + 1.month
+        )
+      end
+
+      context 'without budgets for the date' do
+        let(:date) { Date.current - 1.month }
+
+        it { is_expected.to be_empty }
+      end
+
+      context 'with specific budget for the date' do
+        let(:date) { Date.current }
+
+        it :aggregate_failures do
+          expect(budgets_for_date.first).to eq(first_budget)
+          expect(budgets_for_date.count).to eq(1)
+        end
+      end
+
+      context 'with maintained budget via starts_at' do
+        let(:date) { Date.current + 1.month }
+
+        it :aggregate_failures do
+          expect(budgets_for_date.first).to eq(second_budget)
+          expect(budgets_for_date.count).to eq(1)
+        end
+      end
+
+      context 'with maintained budget via ends_at' do
+        let(:date) { Date.current + 2.months }
+
+        it :aggregate_failures do
+          expect(budgets_for_date.first).to eq(first_budget)
+          expect(budgets_for_date.count).to eq(1)
+        end
+      end
     end
   end
 end
