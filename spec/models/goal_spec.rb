@@ -3,11 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Goal, type: :model do
-  subject(:goal) { build(:goal) }
-
-  before { goal.validate }
-
   describe '#validate' do
+    subject(:goal) { build(:goal) }
+
     it { is_expected.to be_valid }
   end
 
