@@ -3,11 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Category, type: :model do
-  subject(:category) { build(:category) }
-
-  before { category.validate }
-
   describe '#validate' do
+    subject(:category) { build(:category) }
+
     it { is_expected.to be_valid }
   end
 
