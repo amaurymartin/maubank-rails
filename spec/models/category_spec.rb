@@ -3,11 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Category, type: :model do
-  subject(:category) { build(:category) }
-
-  before { category.validate }
-
   describe '#validate' do
+    subject(:category) { build(:category) }
+
     it { is_expected.to be_valid }
   end
 
@@ -103,6 +101,60 @@ RSpec.describe Category, type: :model do
       let(:first_category) { create(:category) }
 
       it { is_expected.to be_valid }
+    end
+  end
+
+  describe '#budget_for' do
+    subject(:budget_for) { category.budget_for(date) }
+
+    let!(:category) { create(:category) }
+    let!(:first_budget) do
+      category.budgets.create(attributes_for(:budget, ends_at: nil))
+    end
+    let!(:second_budget) do
+      category.budgets.create(
+        attributes_for(
+          :budget,
+          starts_at: Date.current + 1.month,
+          ends_at: Date.current + 1.month
+        )
+      )
+    end
+
+    context 'without budgets for the date' do
+      let(:date) { Date.current - 1.month }
+
+      it { is_expected.to be_nil }
+    end
+
+    context 'with specific budget for the date' do
+      let(:date) { Date.current }
+
+      it { is_expected.to eq(first_budget) }
+    end
+
+    context 'with maintained budget via starts_at' do
+      let(:date) { Date.current + 1.month }
+
+      it { is_expected.to eq(second_budget) }
+    end
+
+    context 'with maintained budget via ends_at' do
+      let(:date) { Date.current + 2.months }
+
+      it { is_expected.to eq(first_budget) }
+    end
+  end
+
+  describe 'dependent destroy' do
+    context 'with budget' do
+      let(:category) { create(:category, :with_budget) }
+      let(:category_budgets) { category.budgets }
+
+      it do
+        expect { category.destroy }.to change(Budget, :count)
+          .by(-category_budgets.size)
+      end
     end
   end
 end
