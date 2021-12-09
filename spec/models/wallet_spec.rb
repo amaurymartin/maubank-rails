@@ -3,11 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Wallet, type: :model do
-  subject(:wallet) { build(:wallet) }
-
-  before { wallet.validate }
-
   describe '#validate' do
+    subject(:wallet) { build(:wallet) }
+
     it { is_expected.to be_valid }
   end
 
