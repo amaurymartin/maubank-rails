@@ -105,4 +105,16 @@ RSpec.describe Category, type: :model do
       it { is_expected.to be_valid }
     end
   end
+
+  describe 'dependent destroy' do
+    context 'with budget' do
+      let(:category) { create(:category, :with_budget) }
+      let(:category_budgets) { category.budgets }
+
+      it do
+        expect { category.destroy }.to change(Budget, :count)
+          .by(-category_budgets.size)
+      end
+    end
+  end
 end
