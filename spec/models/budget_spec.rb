@@ -6,8 +6,6 @@ RSpec.describe Budget, type: :model do
   describe '#validate' do
     subject(:budget) { build(:budget) }
 
-    before { budget.validate }
-
     it { is_expected.to be_valid }
   end
 
