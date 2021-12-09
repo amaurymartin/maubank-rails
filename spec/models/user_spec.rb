@@ -301,7 +301,7 @@ RSpec.describe User, type: :model do
       let(:user_categories) { user.categories }
 
       it do
-        expect { user.destroy }.to change(described_class, :count)
+        expect { user.destroy }.to change(Category, :count)
           .by(-user_categories.size)
       end
     end
@@ -311,7 +311,7 @@ RSpec.describe User, type: :model do
       let(:user_goals) { user.goals }
 
       it do
-        expect { user.destroy }.to change(described_class, :count)
+        expect { user.destroy }.to change(Goal, :count)
           .by(-user_goals.size)
       end
     end
@@ -321,7 +321,7 @@ RSpec.describe User, type: :model do
       let(:user_wallets) { user.wallets }
 
       it do
-        expect { user.destroy }.to change(described_class, :count)
+        expect { user.destroy }.to change(Wallet, :count)
           .by(-user_wallets.size)
       end
     end
