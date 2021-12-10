@@ -103,4 +103,16 @@ RSpec.describe Wallet, type: :model do
       it { is_expected.to be_valid }
     end
   end
+
+  describe 'dependent destroy' do
+    context 'with payment' do
+      let(:wallet) { create(:wallet, :with_payment) }
+      let(:wallet_payments) { wallet.payments }
+
+      it do
+        expect { wallet.destroy }.to change(Payment, :count)
+          .by(-wallet_payments.size)
+      end
+    end
+  end
 end
