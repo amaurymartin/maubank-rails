@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_29_033215) do
+ActiveRecord::Schema.define(version: 2021_12_09_064058) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,20 @@ ActiveRecord::Schema.define(version: 2021_11_29_033215) do
     t.index ["user_id"], name: "index_goals_on_user_id"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.uuid "key", null: false
+    t.bigint "category_id"
+    t.bigint "wallet_id", null: false
+    t.date "effective_date", null: false
+    t.decimal "amount", precision: 11, scale: 2, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["category_id"], name: "index_payments_on_category_id"
+    t.index ["effective_date"], name: "index_payments_on_effective_date"
+    t.index ["key"], name: "index_payments_on_key", unique: true
+    t.index ["wallet_id"], name: "index_payments_on_wallet_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.uuid "key", null: false
     t.text "full_name"
@@ -86,5 +100,7 @@ ActiveRecord::Schema.define(version: 2021_11_29_033215) do
   add_foreign_key "budgets", "categories"
   add_foreign_key "categories", "users"
   add_foreign_key "goals", "users"
+  add_foreign_key "payments", "categories"
+  add_foreign_key "payments", "wallets"
   add_foreign_key "wallets", "users"
 end
