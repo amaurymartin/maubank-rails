@@ -8,5 +8,9 @@ FactoryBot.define do
     trait :with_budget do
       after(:create) { |instance| create(:budget, category: instance) }
     end
+
+    trait :with_payment do
+      after(:create) { |instance| create(:payment, category: instance) }
+    end
   end
 end

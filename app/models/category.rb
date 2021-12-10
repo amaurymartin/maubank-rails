@@ -6,6 +6,7 @@ class Category < ApplicationRecord
   belongs_to :user
 
   has_many :budgets, dependent: :destroy
+  has_many :payments, dependent: :nullify
 
   validates :key, presence: true, uniqueness: true
   validates :description,
