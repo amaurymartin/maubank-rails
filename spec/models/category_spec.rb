@@ -157,4 +157,18 @@ RSpec.describe Category, type: :model do
       end
     end
   end
+
+  describe 'dependent nullify' do
+    context 'with payment' do
+      let!(:category) { create(:category, :with_payment) }
+      let(:payments) { category.payments }
+
+      it { expect { category.destroy }.not_to change(Payment, :count) }
+
+      it do
+        expect { category.destroy }.to change { payments.first.reload.category }
+          .from(category).to(nil)
+      end
+    end
+  end
 end
