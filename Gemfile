@@ -10,7 +10,7 @@ gem 'bootsnap', '>= 1.4.4', require: false
 gem 'cpf_cnpj'
 gem 'dotenv-rails'
 # gem 'image_processing', '~> 1.2'
-# gem 'jbuilder', '~> 2.7'
+gem 'jbuilder', '~> 2.7'
 gem 'pg', '~> 1.1'
 gem 'puma', '~> 5.0'
 # gem 'rack-cors'
