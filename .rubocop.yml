@@ -15,7 +15,7 @@ Layout/LineLength:
   Max: 80
 
 Metrics/BlockLength:
-  IgnoredMethods: ['describe']
+  IgnoredMethods: ['describe', 'define']
 
 RSpec/NestedGroups:
   Max: 4
