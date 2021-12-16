@@ -42,7 +42,7 @@ RSpec.describe User, type: :model do
     context 'when already taken' do
       subject(:second_user) { build(:user, key: first_user.key) }
 
-      let!(:first_user) { create(:user) }
+      let(:first_user) { create(:user) }
 
       it { is_expected.to be_invalid }
     end
@@ -100,7 +100,7 @@ RSpec.describe User, type: :model do
     context 'when valid one was already taken' do
       subject(:second_user) { build(:user, username: first_user.username) }
 
-      let!(:first_user) { create(:user) }
+      let(:first_user) { create(:user) }
 
       it { is_expected.to be_invalid }
     end
@@ -128,7 +128,7 @@ RSpec.describe User, type: :model do
     context 'when already taken' do
       subject(:second_user) { build(:user, email: first_user.email) }
 
-      let!(:first_user) { create(:user) }
+      let(:first_user) { create(:user) }
 
       it { is_expected.to be_invalid }
     end
@@ -194,9 +194,11 @@ RSpec.describe User, type: :model do
     end
 
     context 'when is not a brazilian CPF but allows other values' do
-      subject(:user) { build(:user, documentation: 'invalid') }
+      subject(:user) { build(:user, documentation: 'not_brazilian_cpf') }
 
       before { ENV['ACCEPTS_ONLY_BRAZILIAN_CPF'] = 'false' }
+
+      after { ENV['ACCEPTS_ONLY_BRAZILIAN_CPF'] = nil }
 
       it { is_expected.to be_valid }
     end
@@ -214,9 +216,20 @@ RSpec.describe User, type: :model do
         build(:user, documentation: first_user.documentation)
       end
 
-      let!(:first_user) { create(:user) }
+      let(:first_user) { create(:user) }
 
       it { is_expected.to be_invalid }
+    end
+
+    context 'when is formatted' do
+      subject(:user) { build(:user, :formatted_documentation) }
+
+      let(:stripped) { user.documentation.gsub(/[.-]/, '') }
+
+      it do
+        expect { user.validate }.to change(user, :documentation)
+          .from(user.documentation).to(stripped)
+      end
     end
   end
 
@@ -291,6 +304,12 @@ RSpec.describe User, type: :model do
 
       it { is_expected.to be_confirmed }
     end
+  end
+
+  describe '#to_param' do
+    let(:user) { create(:user) }
+
+    it { expect(user.to_param).to eq(user.key) }
   end
 
   describe 'dependent destroy' do

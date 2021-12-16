@@ -11,6 +11,12 @@ FactoryBot.define do
     documentation { Faker::IDNumber.brazilian_citizen_number }
     date_of_birth { Faker::Date.backward(days: 1) }
 
+    trait :formatted_documentation do
+      documentation do
+        Faker::IDNumber.brazilian_citizen_number(formatted: true)
+      end
+    end
+
     trait :confirmed do
       after(:create, &:confirm!)
     end
