@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_09_064058) do
+ActiveRecord::Schema.define(version: 2021_12_24_043958) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "access_tokens", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "token", null: false
+    t.datetime "revoked_at", precision: 6
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["token"], name: "index_access_tokens_on_token", unique: true
+    t.index ["user_id"], name: "index_access_tokens_on_user_id"
+  end
 
   create_table "budgets", force: :cascade do |t|
     t.uuid "key", null: false
@@ -97,6 +107,7 @@ ActiveRecord::Schema.define(version: 2021_12_09_064058) do
     t.index ["user_id"], name: "index_wallets_on_user_id"
   end
 
+  add_foreign_key "access_tokens", "users"
   add_foreign_key "budgets", "categories"
   add_foreign_key "categories", "users"
   add_foreign_key "goals", "users"
