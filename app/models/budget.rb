@@ -9,8 +9,9 @@ class Budget < ApplicationRecord
   validates :amount,
             numericality: { greater_than: 0.00, less_than: 1_000_000_000.00 }
   validates :starts_at, presence: true, uniqueness: { scope: :category }
-  validate :starts_at_cannot_be_in_the_past, if: -> { starts_at.present? }
   validates :ends_at, uniqueness: { scope: :category }
+
+  validate :starts_at_cannot_be_in_the_past, if: -> { starts_at.present? }
   validate :ends_at_cannot_be_before_starts_at
 
   before_validation :set_starts_at_with_beginning_of_month
