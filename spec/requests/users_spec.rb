@@ -158,7 +158,6 @@ RSpec.describe 'Users', type: :request do
       end
 
       it :aggregate_failures do
-        allow(user).to receive(:destroyed?).and_return(false)
         expect { make_request }.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_entity)
       end

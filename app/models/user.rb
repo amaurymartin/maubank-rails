@@ -51,7 +51,7 @@ class User < ApplicationRecord
   private
 
   def date_of_birth_cannot_be_in_the_future
-    return if date_of_birth.nil? || Time.current.to_date >= date_of_birth
+    return if date_of_birth.nil? || Date.current >= date_of_birth
 
     errors.add(:date_of_birth, :invalid)
   end
