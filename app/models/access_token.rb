@@ -23,7 +23,11 @@ class AccessToken < ApplicationRecord
   end
 
   def revoked?
-    revoked_at.present? || created_at < (Time.current - TTL)
+    revoked_at.present? || Time.current > expires_at
+  end
+
+  def expires_at
+    created_at + TTL
   end
 
   private
