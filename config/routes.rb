@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   defaults format: :json do
     get '/health', to: ->(env) { [204, {}, ['']] }
 
+    resources :sessions, only: :create
     resources :users, param: :key, except: :index
   end
 end
