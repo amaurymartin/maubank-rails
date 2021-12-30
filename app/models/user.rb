@@ -3,7 +3,8 @@
 class User < ApplicationRecord
   include Keyable
 
-  with_options dependent: :destroy do
+  with_options dependent: :delete_all do
+    has_many :access_tokens
     has_many :categories
     has_many :goals
     has_many :wallets
