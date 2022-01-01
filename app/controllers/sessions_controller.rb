@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
+  skip_before_action :authenticate, only: :create
+
   def create
     render :unauthorized, status: :unauthorized and return unless current_user
 
