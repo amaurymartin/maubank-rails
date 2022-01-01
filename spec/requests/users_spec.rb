@@ -16,7 +16,7 @@ RSpec.describe 'Users', type: :request do
       post users_path, params: { user: user_create_params }
     end
 
-    context 'when user params are valid' do
+    context 'with valid params' do
       let(:user_create_params) { attributes_for(:user) }
 
       it :aggregate_failures do
@@ -26,7 +26,7 @@ RSpec.describe 'Users', type: :request do
       end
     end
 
-    context 'when user params are invalid' do
+    context 'with invalid params' do
       let(:user_create_params) { { foo: 'bar' } }
 
       it :aggregate_failures do
@@ -38,11 +38,12 @@ RSpec.describe 'Users', type: :request do
   end
 
   describe 'GET /users/:key' do
-    before { get user_path(user_key) }
+    let(:user) { create(:user) }
 
-    context 'when key is valid' do
+    before { get_with_token_to(user_path(user_key), user) }
+
+    context 'with users key' do
       let(:user_key) { user.key }
-      let(:user) { create(:user) }
 
       it :aggregate_failures do
         expect(response).to have_http_status(:ok)
@@ -50,22 +51,34 @@ RSpec.describe 'Users', type: :request do
       end
     end
 
-    context 'when key is invalid' do
+    context 'with another users key' do
+      let(:user_key) { create(:user).key }
+
+      it :aggregate_failures do
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'with invalid key' do
       let(:user_key) { 'invalid' }
 
-      it { expect(response).to have_http_status(:not_found) }
+      it :aggregate_failures do
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to be_empty
+      end
     end
   end
 
   describe 'PUT /users/:key' do
     def make_request
-      put user_path(user_key), params: { user: user_put_params }
+      put_with_token_to user_path(user_key), user, { user: user_put_params }
     end
 
     let(:user) { create(:user) }
     let(:user_put_params) { attributes_for(:user) }
 
-    context 'when both key and params are valid' do
+    context 'with both key and params valid' do
       let(:user_key) { user.key }
 
       it :aggregate_failures do
@@ -75,7 +88,7 @@ RSpec.describe 'Users', type: :request do
       end
     end
 
-    context 'when key is valid but params are invalid' do
+    context 'with valid key and invalid params' do
       let(:user_key) { user.key }
       let(:user_put_params) { attributes_for(:user, nickname: nil) }
 
@@ -86,24 +99,37 @@ RSpec.describe 'Users', type: :request do
       end
     end
 
-    context 'when key is invalid but params are valid' do
+    context 'with another users key' do
+      let(:user_key) { create(:user).key }
+
+      it :aggregate_failures do
+        expect { make_request and user.reload }.not_to change(user, :attributes)
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'with invalid key' do
       let(:user_key) { 'invalid' }
 
       before { make_request }
 
-      it { expect(response).to have_http_status(:not_found) }
+      it :aggregate_failures do
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to be_empty
+      end
     end
   end
 
   describe 'PATCH /users/:key' do
     def make_request
-      patch user_path(user_key), params: { user: user_patch_params }
+      patch_with_token_to user_path(user_key), user, { user: user_patch_params }
     end
 
     let(:user) { create(:user) }
     let(:user_patch_params) { { full_name: Faker::Name.name } }
 
-    context 'when both key and params are valid' do
+    context 'with both key and params valid' do
       let(:user_key) { user.key }
 
       it :aggregate_failures do
@@ -113,7 +139,7 @@ RSpec.describe 'Users', type: :request do
       end
     end
 
-    context 'when key is valid but params are invalid' do
+    context 'with valid key and invalid params' do
       let(:user_key) { user.key }
       let(:user_patch_params) { { password: 'invalid' } }
 
@@ -124,32 +150,46 @@ RSpec.describe 'Users', type: :request do
       end
     end
 
-    context 'when key is invalid but params are valid' do
+    context 'with another users key' do
+      let(:user_key) { create(:user).key }
+
+      it :aggregate_failures do
+        expect { make_request and user.reload }.not_to change(user, :attributes)
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'with invalid key' do
       let(:user_key) { 'invalid' }
 
       before { make_request }
 
-      it { expect(response).to have_http_status(:not_found) }
+      it :aggregate_failures do
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to be_empty
+      end
     end
   end
 
   describe 'DELETE /users/:key' do
     def make_request
-      delete user_path(user_key)
+      delete_with_token_to user_path(user_key), user
     end
 
     let!(:user) { create(:user) }
 
-    context 'when key is valid' do
+    context 'with valid key' do
       let(:user_key) { user.key }
 
       it :aggregate_failures do
         expect { make_request }.to change(User, :count).by(-1)
         expect(response).to have_http_status(:no_content)
+        expect(response.body).to be_empty
       end
     end
 
-    context 'when user has not been destroyed' do
+    context 'with errors' do
       let(:user_key) { user.key }
 
       before do
@@ -163,7 +203,18 @@ RSpec.describe 'Users', type: :request do
       end
     end
 
-    context 'when key is invalid' do
+    context 'with another users key' do
+      let(:user_key) { create(:user).key }
+
+      before { make_request }
+
+      it :aggregate_failures do
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'with invalid key' do
       let(:user_key) { 'invalid' }
 
       before { make_request }
@@ -171,6 +222,7 @@ RSpec.describe 'Users', type: :request do
       it :aggregate_failures do
         expect { make_request }.not_to change(User, :count)
         expect(response).to have_http_status(:not_found)
+        expect(response.body).to be_empty
       end
     end
   end
