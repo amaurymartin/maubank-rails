@@ -5,7 +5,7 @@ class Wallet < ApplicationRecord
 
   belongs_to :user
 
-  has_many :payments, dependent: :destroy
+  has_many :payments, dependent: :delete_all
 
   validates :key, presence: true, uniqueness: true
   validates :description, presence: true,

@@ -5,5 +5,6 @@ Rails.application.routes.draw do
 
     resources :sessions, only: :create
     resources :users, param: :key, except: :index
+    resources :wallets, param: :key, except: :show
   end
 end
