@@ -55,7 +55,7 @@ RSpec.describe 'Users', type: :request do
       let(:user_key) { create(:user).key }
 
       it :aggregate_failures do
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:not_found)
         expect(response.body).to be_empty
       end
     end
@@ -104,7 +104,7 @@ RSpec.describe 'Users', type: :request do
 
       it :aggregate_failures do
         expect { make_request and user.reload }.not_to change(user, :attributes)
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:not_found)
         expect(response.body).to be_empty
       end
     end
@@ -155,7 +155,7 @@ RSpec.describe 'Users', type: :request do
 
       it :aggregate_failures do
         expect { make_request and user.reload }.not_to change(user, :attributes)
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:not_found)
         expect(response.body).to be_empty
       end
     end
@@ -209,7 +209,7 @@ RSpec.describe 'Users', type: :request do
       before { make_request }
 
       it :aggregate_failures do
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:not_found)
         expect(response.body).to be_empty
       end
     end
