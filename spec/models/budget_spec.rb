@@ -10,7 +10,7 @@ RSpec.describe Budget, type: :model do
   end
 
   describe '#user' do
-    subject(:budget) { build(:budget, category: category) }
+    subject(:budget) { build(:budget, category:) }
 
     let(:category) { build(:category) }
 

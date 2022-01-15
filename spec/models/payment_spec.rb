@@ -10,7 +10,7 @@ RSpec.describe Payment, type: :model do
   end
 
   describe '#user' do
-    subject(:payment) { build(:payment, wallet: wallet) }
+    subject(:payment) { build(:payment, wallet:) }
 
     let(:wallet) { build(:wallet) }
 
