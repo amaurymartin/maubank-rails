@@ -54,7 +54,7 @@ RSpec.describe 'Wallets', type: :request do
 
     context 'when user has at least one wallet' do
       before do
-        create_list(:wallet, 2, user: user)
+        create_list(:wallet, 2, user:)
         make_request
       end
 
@@ -75,7 +75,7 @@ RSpec.describe 'Wallets', type: :request do
       )
     end
 
-    let(:wallet) { create(:wallet, user: user) }
+    let(:wallet) { create(:wallet, user:) }
     let(:wallet_put_params) { attributes_for(:wallet, description: 'Updated') }
 
     context 'with both key and params valid' do
@@ -131,7 +131,7 @@ RSpec.describe 'Wallets', type: :request do
       )
     end
 
-    let(:wallet) { create(:wallet, user: user) }
+    let(:wallet) { create(:wallet, user:) }
     let(:wallet_put_params) { attributes_for(:wallet, description: 'Patched') }
 
     context 'with both key and params valid' do
@@ -185,7 +185,7 @@ RSpec.describe 'Wallets', type: :request do
       delete_with_token_to(wallet_path(wallet_key), user)
     end
 
-    let!(:wallet) { create(:wallet, user: user) }
+    let!(:wallet) { create(:wallet, user:) }
 
     context 'with valid key' do
       let(:wallet_key) { wallet.key }

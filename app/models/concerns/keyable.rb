@@ -6,7 +6,7 @@ module Keyable
   included do
     before_validation :set_key, on: :create
 
-    define_method 'set_key' do
+    define_method :set_key do
       self.key ||= SecureRandom.uuid
     end
   end

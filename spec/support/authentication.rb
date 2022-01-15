@@ -2,23 +2,23 @@
 
 module Authentication
   def post_with_token_to(path, user = create_user, params = {}, headers = {})
-    post path, params: params, headers: with_access_token(headers, user)
+    post path, params:, headers: with_access_token(headers, user)
   end
 
   def get_with_token_to(path, user = create_user, params = {}, headers = {})
-    get path, params: params, headers: with_access_token(headers, user)
+    get path, params:, headers: with_access_token(headers, user)
   end
 
   def put_with_token_to(path, user = create_user, params = {}, headers = {})
-    put path, params: params, headers: with_access_token(headers, user)
+    put path, params:, headers: with_access_token(headers, user)
   end
 
   def patch_with_token_to(path, user = create_user, params = {}, headers = {})
-    patch path, params: params, headers: with_access_token(headers, user)
+    patch path, params:, headers: with_access_token(headers, user)
   end
 
   def delete_with_token_to(path, user = create_user, params = {}, headers = {})
-    delete path, params: params, headers: with_access_token(headers, user)
+    delete path, params:, headers: with_access_token(headers, user)
   end
 
   private
@@ -28,7 +28,7 @@ module Authentication
   end
 
   def with_access_token(headers, user)
-    access_token = build(:access_token, user: user)
+    access_token = build(:access_token, user:)
     headers['Authorization'] = "Token #{access_token.send(:generated_token)}"
     access_token.save
 
