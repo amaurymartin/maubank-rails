@@ -51,9 +51,10 @@ class UsersController < ApplicationController
     @user = User.find_by!(key: params[:key])
   end
 
+  # FIXME: perhaps routes should be '/me' for example, without url key param
   def check_ownership
-    # FIXME: hackers could use this response status to discover user's key
-    # request limit is required to prevent this
-    head :forbidden unless current_user == @user
+    # for other resources, ownership means current_user.resource.find_by!
+    # this may result in a not found, then the same pattern is followed here
+    record_not_found unless current_user == @user
   end
 end
