@@ -127,12 +127,14 @@ RSpec.describe 'Wallets', type: :request do
   describe 'PATCH /wallets/:key' do
     def make_request
       patch_with_token_to(
-        wallet_path(wallet_key), user, { wallet: wallet_put_params }
+        wallet_path(wallet_key), user, { wallet: wallet_patch_params }
       )
     end
 
     let(:wallet) { create(:wallet, user:) }
-    let(:wallet_put_params) { attributes_for(:wallet, description: 'Patched') }
+    let(:wallet_patch_params) do
+      attributes_for(:wallet, description: 'Patched')
+    end
 
     context 'with both key and params valid' do
       let(:wallet_key) { wallet.key }
@@ -147,7 +149,7 @@ RSpec.describe 'Wallets', type: :request do
 
     context 'with valid key and invalid params' do
       let(:wallet_key) { wallet.key }
-      let(:wallet_put_params) { attributes_for(:wallet, description: nil) }
+      let(:wallet_patch_params) { attributes_for(:wallet, description: nil) }
 
       it :aggregate_failures do
         expect { make_request and wallet.reload }
