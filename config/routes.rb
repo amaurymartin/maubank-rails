@@ -7,6 +7,8 @@ Rails.application.routes.draw do
     resources :users, param: :key, except: :index
     resources :wallets, param: :key, except: :show
     resources :goals, param: :key
-    resources :categories, param: :key
+    resources :categories, param: :key, shallow: true do
+      resources :budgets, param: :key, except: :index
+    end
   end
 end
