@@ -17,6 +17,9 @@ Layout/LineLength:
 Metrics/BlockLength:
   IgnoredMethods: ['describe', 'define']
 
+RSpec/ExampleLength:
+  Max: 7
+
 RSpec/MultipleMemoizedHelpers:
   Max: 7
 
