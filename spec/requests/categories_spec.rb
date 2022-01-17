@@ -74,7 +74,7 @@ RSpec.describe 'Categories', type: :request do
 
   describe 'GET /categories/:key' do
     def make_request
-      get_with_token_to(category_path(category_key), user)
+      get_with_token_to(category_path(category), user)
     end
 
     let(:category) { create(:category, user:) }
@@ -82,8 +82,6 @@ RSpec.describe 'Categories', type: :request do
     before { make_request }
 
     context 'when category belongs to logged user' do
-      let(:category_key) { category.key }
-
       it :aggregate_failures do
         expect(response).to have_http_status(:ok)
         expect(response_body[:category].keys)
@@ -94,7 +92,7 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'when category not belongs to logged user' do
-      let(:category_key) { create(:category).key }
+      let(:category) { create(:category) }
 
       it :aggregate_failures do
         expect(response).to have_http_status(:not_found)
@@ -106,7 +104,7 @@ RSpec.describe 'Categories', type: :request do
   describe 'PUT /categories/:key' do
     def make_request
       put_with_token_to(
-        category_path(category_key), user, { category: category_put_params }
+        category_path(category), user, { category: category_put_params }
       )
     end
 
@@ -116,8 +114,6 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'with both key and params valid' do
-      let(:category_key) { category.key }
-
       it :aggregate_failures do
         expect { make_request and category.reload }
           .to change(category, :attributes)
@@ -130,7 +126,6 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'with valid key and invalid params' do
-      let(:category_key) { category.key }
       let(:category_put_params) { attributes_for(:category, description: nil) }
 
       it :aggregate_failures do
@@ -142,7 +137,7 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'with another users key' do
-      let(:category_key) { create(:category).key }
+      let(:category) { create(:category) }
 
       it :aggregate_failures do
         expect { make_request and category.reload }
@@ -153,7 +148,7 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'with invalid key' do
-      let(:category_key) { 'invalid' }
+      let(:category) { 'invalid' }
 
       before { make_request }
 
@@ -167,7 +162,7 @@ RSpec.describe 'Categories', type: :request do
   describe 'PATCH /categories/:key' do
     def make_request
       patch_with_token_to(
-        category_path(category_key), user, { category: category_patch_params }
+        category_path(category), user, { category: category_patch_params }
       )
     end
 
@@ -177,8 +172,6 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'with both key and params valid' do
-      let(:category_key) { category.key }
-
       it :aggregate_failures do
         expect { make_request and category.reload }
           .to change(category, :attributes)
@@ -191,7 +184,6 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'with valid key and invalid params' do
-      let(:category_key) { category.key }
       let(:category_patch_params) do
         attributes_for(:category, description: nil)
       end
@@ -205,7 +197,7 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'with another users key' do
-      let(:category_key) { create(:category).key }
+      let(:category) { create(:category) }
 
       it :aggregate_failures do
         expect { make_request and category.reload }
@@ -216,7 +208,7 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'with invalid key' do
-      let(:category_key) { 'invalid' }
+      let(:category) { 'invalid' }
 
       before { make_request }
 
@@ -229,14 +221,12 @@ RSpec.describe 'Categories', type: :request do
 
   describe 'DELETE /categories/:key' do
     def make_request
-      delete_with_token_to(category_path(category_key), user)
+      delete_with_token_to(category_path(category), user)
     end
 
     let!(:category) { create(:category, user:) }
 
     context 'with valid key' do
-      let(:category_key) { category.key }
-
       it :aggregate_failures do
         expect { make_request }.to change(Category, :count).by(-1)
         expect(response).to have_http_status(:no_content)
@@ -245,7 +235,6 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'with errors' do
-      let(:category_key) { category.key }
       let(:category_instance) { instance_double(category) }
 
       before do
@@ -261,7 +250,7 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'with another users key' do
-      let(:category_key) { create(:category).key }
+      let(:category) { create(:category) }
 
       before { make_request }
 
@@ -272,7 +261,7 @@ RSpec.describe 'Categories', type: :request do
     end
 
     context 'with invalid key' do
-      let(:category_key) { 'invalid' }
+      let(:category) { 'invalid' }
 
       it :aggregate_failures do
         expect { make_request }.not_to change(Category, :count)
