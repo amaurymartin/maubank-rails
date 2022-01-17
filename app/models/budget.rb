@@ -27,6 +27,10 @@ class Budget < ApplicationRecord
       .limit(1)
   }
 
+  def to_param
+    key
+  end
+
   private
 
   def starts_at_cannot_be_in_the_past

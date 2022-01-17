@@ -10,6 +10,8 @@ class User < ApplicationRecord
     has_many :wallets
   end
 
+  has_many :budgets, through: :categories
+
   validates :key, presence: true, uniqueness: true
   validates :full_name, presence: true, allow_nil: true
   validates :nickname, presence: true
