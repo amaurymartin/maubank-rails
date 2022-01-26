@@ -10,4 +10,8 @@ class Wallet < ApplicationRecord
   validates :key, presence: true, uniqueness: true
   validates :description, presence: true,
                           uniqueness: { scope: :user, case_sensitive: false }
+
+  def to_param
+    key
+  end
 end

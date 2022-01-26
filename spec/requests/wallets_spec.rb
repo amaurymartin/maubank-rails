@@ -70,17 +70,13 @@ RSpec.describe 'Wallets', type: :request do
 
   describe 'PUT /wallets/:key' do
     def make_request
-      put_with_token_to(
-        wallet_path(wallet_key), user, { wallet: wallet_put_params }
-      )
+      put_with_token_to wallet_path(wallet), user, { wallet: wallet_put_params }
     end
 
     let(:wallet) { create(:wallet, user:) }
     let(:wallet_put_params) { attributes_for(:wallet, description: 'Updated') }
 
     context 'with both key and params valid' do
-      let(:wallet_key) { wallet.key }
-
       it :aggregate_failures do
         expect { make_request and wallet.reload }.to change(wallet, :attributes)
         expect(response).to have_http_status(:ok)
@@ -90,7 +86,6 @@ RSpec.describe 'Wallets', type: :request do
     end
 
     context 'with valid key and invalid params' do
-      let(:wallet_key) { wallet.key }
       let(:wallet_put_params) { attributes_for(:wallet, description: nil) }
 
       it :aggregate_failures do
@@ -102,7 +97,7 @@ RSpec.describe 'Wallets', type: :request do
     end
 
     context 'with another users key' do
-      let(:wallet_key) { create(:wallet).key }
+      let(:wallet) { create(:wallet) }
 
       it :aggregate_failures do
         expect { make_request and wallet.reload }
@@ -113,7 +108,7 @@ RSpec.describe 'Wallets', type: :request do
     end
 
     context 'with invalid key' do
-      let(:wallet_key) { 'invalid' }
+      let(:wallet) { 'invalid' }
 
       before { make_request }
 
@@ -127,7 +122,7 @@ RSpec.describe 'Wallets', type: :request do
   describe 'PATCH /wallets/:key' do
     def make_request
       patch_with_token_to(
-        wallet_path(wallet_key), user, { wallet: wallet_patch_params }
+        wallet_path(wallet), user, { wallet: wallet_patch_params }
       )
     end
 
@@ -137,8 +132,6 @@ RSpec.describe 'Wallets', type: :request do
     end
 
     context 'with both key and params valid' do
-      let(:wallet_key) { wallet.key }
-
       it :aggregate_failures do
         expect { make_request and wallet.reload }.to change(wallet, :attributes)
         expect(response).to have_http_status(:ok)
@@ -148,7 +141,6 @@ RSpec.describe 'Wallets', type: :request do
     end
 
     context 'with valid key and invalid params' do
-      let(:wallet_key) { wallet.key }
       let(:wallet_patch_params) { attributes_for(:wallet, description: nil) }
 
       it :aggregate_failures do
@@ -160,7 +152,7 @@ RSpec.describe 'Wallets', type: :request do
     end
 
     context 'with another users key' do
-      let(:wallet_key) { create(:wallet).key }
+      let(:wallet) { create(:wallet) }
 
       it :aggregate_failures do
         expect { make_request and wallet.reload }
@@ -171,7 +163,7 @@ RSpec.describe 'Wallets', type: :request do
     end
 
     context 'with invalid key' do
-      let(:wallet_key) { 'invalid' }
+      let(:wallet) { 'invalid' }
 
       before { make_request }
 
@@ -184,14 +176,12 @@ RSpec.describe 'Wallets', type: :request do
 
   describe 'DELETE /wallets/:key' do
     def make_request
-      delete_with_token_to(wallet_path(wallet_key), user)
+      delete_with_token_to(wallet_path(wallet), user)
     end
 
     let!(:wallet) { create(:wallet, user:) }
 
     context 'with valid key' do
-      let(:wallet_key) { wallet.key }
-
       it :aggregate_failures do
         expect { make_request }.to change(Wallet, :count).by(-1)
         expect(response).to have_http_status(:no_content)
@@ -200,7 +190,6 @@ RSpec.describe 'Wallets', type: :request do
     end
 
     context 'with errors' do
-      let(:wallet_key) { wallet.key }
       let(:wallet_instance) { instance_double(Wallet) }
 
       before do
@@ -216,7 +205,7 @@ RSpec.describe 'Wallets', type: :request do
     end
 
     context 'with another users key' do
-      let(:wallet_key) { create(:wallet).key }
+      let(:wallet) { create(:wallet) }
 
       before { make_request }
 
@@ -227,7 +216,7 @@ RSpec.describe 'Wallets', type: :request do
     end
 
     context 'with invalid key' do
-      let(:wallet_key) { 'invalid' }
+      let(:wallet) { 'invalid' }
 
       it :aggregate_failures do
         expect { make_request }.not_to change(Wallet, :count)
