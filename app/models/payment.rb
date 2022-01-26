@@ -15,4 +15,8 @@ class Payment < ApplicationRecord
   }
 
   delegate :user, to: :wallet
+
+  def to_param
+    key
+  end
 end
