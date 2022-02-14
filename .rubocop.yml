@@ -18,10 +18,10 @@ Metrics/BlockLength:
   IgnoredMethods: ['describe', 'define']
 
 RSpec/ExampleLength:
-  Max: 7
+  Max: 13
 
 RSpec/MultipleMemoizedHelpers:
-  Max: 7
+  Max: 10
 
 RSpec/NestedGroups:
   Max: 4
