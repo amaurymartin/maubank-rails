@@ -2,9 +2,7 @@
 
 json.payments do
   json.array! @payments do |payment|
-    # rubocop:disable Style/HashSyntax
     json.partial! 'payments/payment', payment: payment
-    # rubocop:enable Style/HashSyntax
 
     json.wallet do
       json.extract! payment.wallet, :description
