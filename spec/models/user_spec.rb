@@ -251,15 +251,15 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '#date_of_birth' do
+  describe '#born_on' do
     context 'when is nil' do
-      subject(:user) { build(:user, date_of_birth: nil) }
+      subject(:user) { build(:user, born_on: nil) }
 
       it { is_expected.to be_valid }
     end
 
     context 'when format is invalid' do
-      subject(:user) { build(:user, date_of_birth: 'not_a_valid_date') }
+      subject(:user) { build(:user, born_on: 'not_a_valid_date') }
 
       it 'must treat as nil' do
         expect(user).to be_valid
@@ -267,13 +267,13 @@ RSpec.describe User, type: :model do
     end
 
     context 'when is in the future' do
-      subject(:user) { build(:user, date_of_birth: 1.day.from_now) }
+      subject(:user) { build(:user, born_on: 1.day.from_now) }
 
       it { is_expected.to be_invalid }
     end
 
     context 'when is today' do
-      subject(:user) { build(:user, date_of_birth: Date.current) }
+      subject(:user) { build(:user, born_on: Date.current) }
 
       it { is_expected.to be_valid }
     end

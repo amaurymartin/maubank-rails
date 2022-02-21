@@ -42,7 +42,7 @@ class UsersController < ApplicationController
     params.require(:user).permit(
       %i[
         full_name nickname username email password password_confirmation
-        documentation date_of_birth
+        documentation born_on
       ]
     )
   end

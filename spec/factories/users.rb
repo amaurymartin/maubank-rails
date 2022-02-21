@@ -9,7 +9,7 @@ FactoryBot.define do
     password { Faker::Internet.password(min_length: 8) }
     password_confirmation { password }
     documentation { Faker::IDNumber.brazilian_citizen_number }
-    date_of_birth { Faker::Date.backward(days: 1) }
+    born_on { Faker::Date.backward(days: 1) }
 
     trait :formatted_documentation do
       documentation do

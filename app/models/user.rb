@@ -19,7 +19,7 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: true, allow_nil: true
   validates :email, presence: true, uniqueness: true
   validates_email_format_of :email, disposable: true
-  validate :date_of_birth_cannot_be_in_the_future
+  validate :cannot_born_in_the_future
   validates :confirmed_at, absence: true, if: -> { new_record? }
 
   with_options if: -> { new_record? || password.present? } do
@@ -51,10 +51,10 @@ class User < ApplicationRecord
 
   private
 
-  def date_of_birth_cannot_be_in_the_future
-    return if date_of_birth.nil? || Date.current >= date_of_birth
+  def cannot_born_in_the_future
+    return if born_on.nil? || Date.current >= born_on
 
-    errors.add(:date_of_birth, :invalid)
+    errors.add(:born_on, :invalid)
   end
 
   def strip_documentation
