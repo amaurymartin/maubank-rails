@@ -13,7 +13,7 @@ RSpec.describe User, type: :model do
     context 'when is nil' do
       subject(:user) { build(:user, key: nil) }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(user).to be_valid
         expect(user.key).to be_present
       end
@@ -22,7 +22,7 @@ RSpec.describe User, type: :model do
     context 'when is blank' do
       subject(:user) { build(:user, key: '') }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(user).to be_valid
         expect(user.key).to be_present
       end
@@ -33,7 +33,7 @@ RSpec.describe User, type: :model do
 
       let(:invalid_key) { 'invalid_key' }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(user).to be_valid
         expect(user.key).not_to eq(invalid_key)
       end
@@ -89,7 +89,7 @@ RSpec.describe User, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when nil one was already taken' do
+    context 'when nil was already taken' do
       subject(:second_user) { build(:user, username: nil) }
 
       before { create(:user, username: nil) }
@@ -203,7 +203,7 @@ RSpec.describe User, type: :model do
       it { is_expected.to be_valid }
     end
 
-    context 'when nil one was already taken' do
+    context 'when nil was already taken' do
       subject(:second_user) { build(:user, documentation: nil) }
 
       before { create(:user, documentation: nil) }
@@ -255,7 +255,7 @@ RSpec.describe User, type: :model do
     end
 
     context 'when is today' do
-      subject(:user) { build(:user, date_of_birth: Time.current) }
+      subject(:user) { build(:user, date_of_birth: Date.current) }
 
       it { is_expected.to be_valid }
     end
