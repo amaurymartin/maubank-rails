@@ -10,17 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_24_043958) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_02_21_054401) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "access_tokens", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.text "token", null: false
-    t.datetime "revoked_at", precision: 6
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["token"], name: "index_access_tokens_on_token", unique: true
     t.index ["user_id"], name: "index_access_tokens_on_user_id"
   end
@@ -31,8 +30,8 @@ ActiveRecord::Schema.define(version: 2021_12_24_043958) do
     t.decimal "amount", precision: 11, scale: 2, null: false
     t.date "starts_at", null: false
     t.date "ends_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["category_id", "ends_at"], name: "index_budgets_on_category_id_and_ends_at", unique: true
     t.index ["category_id", "starts_at"], name: "index_budgets_on_category_id_and_starts_at", unique: true
     t.index ["category_id"], name: "index_budgets_on_category_id"
@@ -43,8 +42,8 @@ ActiveRecord::Schema.define(version: 2021_12_24_043958) do
     t.uuid "key", null: false
     t.bigint "user_id", null: false
     t.text "description", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["key"], name: "index_categories_on_key", unique: true
     t.index ["user_id", "description"], name: "index_categories_on_user_id_and_description", unique: true
     t.index ["user_id"], name: "index_categories_on_user_id"
@@ -57,8 +56,8 @@ ActiveRecord::Schema.define(version: 2021_12_24_043958) do
     t.decimal "amount", precision: 11, scale: 2, null: false
     t.date "starts_at", null: false
     t.date "ends_at", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["key"], name: "index_goals_on_key", unique: true
     t.index ["user_id", "description"], name: "index_goals_on_user_id_and_description", unique: true
     t.index ["user_id"], name: "index_goals_on_user_id"
@@ -70,8 +69,8 @@ ActiveRecord::Schema.define(version: 2021_12_24_043958) do
     t.bigint "wallet_id", null: false
     t.date "effective_date", null: false
     t.decimal "amount", precision: 11, scale: 2, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["category_id"], name: "index_payments_on_category_id"
     t.index ["effective_date"], name: "index_payments_on_effective_date"
     t.index ["key"], name: "index_payments_on_key", unique: true
@@ -86,10 +85,10 @@ ActiveRecord::Schema.define(version: 2021_12_24_043958) do
     t.text "email", null: false
     t.text "password_digest", null: false
     t.text "documentation"
-    t.date "date_of_birth"
-    t.datetime "confirmed_at", precision: 6
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.date "born_on"
+    t.datetime "confirmed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["documentation"], name: "index_users_on_documentation", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["key"], name: "index_users_on_key", unique: true
@@ -100,8 +99,8 @@ ActiveRecord::Schema.define(version: 2021_12_24_043958) do
     t.uuid "key", null: false
     t.bigint "user_id", null: false
     t.text "description", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["key"], name: "index_wallets_on_key", unique: true
     t.index ["user_id", "description"], name: "index_wallets_on_user_id_and_description", unique: true
     t.index ["user_id"], name: "index_wallets_on_user_id"

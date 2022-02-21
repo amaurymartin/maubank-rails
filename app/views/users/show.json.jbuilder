@@ -4,6 +4,6 @@ json.user do
   json.extract!(
     user,
     :key, :full_name, :nickname, :username, :email, :documentation,
-    :date_of_birth, :confirmed_at, :created_at, :updated_at
+    :born_on, :confirmed_at, :created_at, :updated_at
   )
 end

@@ -7,7 +7,7 @@ RSpec.describe 'Users', type: :request do
   let(:user_show_json_keys) do
     %i[
       key full_name nickname username email documentation
-      date_of_birth confirmed_at created_at updated_at
+      born_on confirmed_at created_at updated_at
     ]
   end
 
