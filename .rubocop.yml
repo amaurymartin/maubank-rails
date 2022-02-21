@@ -15,7 +15,7 @@ Layout/LineLength:
   Max: 80
 
 Metrics/BlockLength:
-  IgnoredMethods: ['describe', 'define']
+  IgnoredMethods: ['describe', 'define', 'factory']
 
 RSpec/ExampleLength:
   Max: 13
