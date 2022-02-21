@@ -3,6 +3,10 @@
 class User < ApplicationRecord
   include Keyable
 
+  attr_readonly :key, :email
+
+  has_secure_password
+
   with_options dependent: :delete_all do
     has_many :access_tokens
     has_many :categories
@@ -20,7 +24,7 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   validates_email_format_of :email, disposable: true
   validate :cannot_born_in_the_future
-  validates :confirmed_at, absence: true, if: -> { new_record? }
+  validates :confirmed_at, absence: true, on: :create
 
   with_options if: -> { new_record? || password.present? } do
     validates :password, confirmation: true, length: { minimum: 8 }
@@ -32,10 +36,6 @@ class User < ApplicationRecord
     validates :documentation, uniqueness: true
     validate :valid_brazilian_cpf?, if: :documentation_must_be_a_brazilian_cpf?
   end
-
-  attr_readonly :key, :email
-
-  has_secure_password
 
   def to_param
     key
