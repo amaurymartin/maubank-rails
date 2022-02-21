@@ -8,7 +8,7 @@ class AccessToken < ApplicationRecord
   belongs_to :user
 
   validates :token, format: { with: /\w{64}/ }, uniqueness: true
-  validates :revoked_at, absence: true, if: -> { new_record? }
+  validates :revoked_at, absence: true, on: :create
 
   before_validation :generate_and_encrypt_token, on: :create
 
