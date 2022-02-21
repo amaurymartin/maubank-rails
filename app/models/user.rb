@@ -38,6 +38,8 @@ class User < ApplicationRecord
     after_validation :strip_documentation
   end
 
+  attr_readonly :key, :email
+
   has_secure_password
 
   def to_param

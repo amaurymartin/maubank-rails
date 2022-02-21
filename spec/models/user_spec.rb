@@ -46,6 +46,15 @@ RSpec.describe User, type: :model do
 
       it { is_expected.to be_invalid }
     end
+
+    context 'when updating' do
+      subject(:user) { create(:user) }
+
+      it do
+        expect { user.update(key: SecureRandom.uuid) && user.reload }
+          .not_to change(user, :key)
+      end
+    end
   end
 
   describe '#full_name' do
@@ -131,6 +140,15 @@ RSpec.describe User, type: :model do
       let(:first_user) { create(:user) }
 
       it { is_expected.to be_invalid }
+    end
+
+    context 'when updating' do
+      subject(:user) { create(:user) }
+
+      it do
+        expect { user.update(email: Faker::Internet.safe_email) && user.reload }
+          .not_to change(user, :email)
+      end
     end
   end
 
