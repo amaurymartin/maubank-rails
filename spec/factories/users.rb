@@ -21,6 +21,10 @@ FactoryBot.define do
       after(:create, &:confirm!)
     end
 
+    trait :with_access_token do
+      after(:create) { |instance| create(:access_token, user: instance) }
+    end
+
     trait :with_category do
       after(:create) { |instance| create(:category, user: instance) }
     end

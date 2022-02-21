@@ -313,6 +313,16 @@ RSpec.describe User, type: :model do
   end
 
   describe 'dependent destroy' do
+    context 'with access token' do
+      let(:user) { create(:user, :with_access_token) }
+      let(:user_access_tokens) { user.access_tokens }
+
+      it do
+        expect { user.destroy }.to change(AccessToken, :count)
+          .by(-user_access_tokens.size)
+      end
+    end
+
     context 'with category' do
       let(:user) { create(:user, :with_category) }
       let(:user_categories) { user.categories }
