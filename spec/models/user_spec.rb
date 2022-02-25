@@ -214,9 +214,7 @@ RSpec.describe User, type: :model do
     context 'when is not a brazilian CPF but allows other values' do
       subject(:user) { build(:user, documentation: 'not_brazilian_cpf') }
 
-      before { ENV['ACCEPTS_ONLY_BRAZILIAN_CPF'] = 'false' }
-
-      after { ENV['ACCEPTS_ONLY_BRAZILIAN_CPF'] = nil }
+      before { stub_const('User::ONLY_BRAZILIAN_CPF', false) }
 
       it { is_expected.to be_valid }
     end

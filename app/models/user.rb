@@ -3,6 +3,10 @@
 class User < ApplicationRecord
   include Keyable
 
+  ONLY_BRAZILIAN_CPF = ActiveModel::Type::Boolean.new.cast(
+    ENV.fetch('ONLY_BRAZILIAN_CPF', true)
+  )
+
   attr_readonly :key, :email
 
   has_secure_password
@@ -34,7 +38,7 @@ class User < ApplicationRecord
   with_options unless: -> { documentation.nil? } do
     before_validation :strip_documentation
     validates :documentation, uniqueness: true
-    validate :valid_brazilian_cpf?, if: :documentation_must_be_a_brazilian_cpf?
+    validate :valid_brazilian_cpf?, if: -> { ONLY_BRAZILIAN_CPF }
   end
 
   def to_param
@@ -59,12 +63,6 @@ class User < ApplicationRecord
 
   def strip_documentation
     self.documentation = CPF.new(documentation).stripped
-  end
-
-  def documentation_must_be_a_brazilian_cpf?
-    ActiveModel::Type::Boolean.new.cast(
-      ENV.fetch('ACCEPTS_ONLY_BRAZILIAN_CPF', true)
-    )
   end
 
   def valid_brazilian_cpf?
