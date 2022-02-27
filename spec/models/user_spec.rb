@@ -44,7 +44,11 @@ RSpec.describe User, type: :model do
 
       let(:first_user) { create(:user) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_user).to be_invalid
+        expect(second_user.errors)
+          .to be_added(:key, :taken, { value: first_user.key })
+      end
     end
 
     context 'when updating' do
@@ -111,7 +115,11 @@ RSpec.describe User, type: :model do
 
       let(:first_user) { create(:user) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_user).to be_invalid
+        expect(second_user.errors)
+          .to be_added(:username, :taken, { value: first_user.username })
+      end
     end
   end
 
@@ -214,9 +222,7 @@ RSpec.describe User, type: :model do
     context 'when is not a brazilian CPF but allows other values' do
       subject(:user) { build(:user, documentation: 'not_brazilian_cpf') }
 
-      before { ENV['ACCEPTS_ONLY_BRAZILIAN_CPF'] = 'false' }
-
-      after { ENV['ACCEPTS_ONLY_BRAZILIAN_CPF'] = nil }
+      before { stub_const('User::ONLY_BRAZILIAN_CPF', false) }
 
       it { is_expected.to be_valid }
     end
@@ -286,7 +292,7 @@ RSpec.describe User, type: :model do
       it { is_expected.to be_valid }
     end
 
-    context 'when is setted on creation' do
+    context 'when is set at creation' do
       subject(:user) { build(:user, confirmed_at: Time.current) }
 
       it { is_expected.to be_invalid }

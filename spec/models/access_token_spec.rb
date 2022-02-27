@@ -15,13 +15,24 @@ RSpec.describe AccessToken, type: :model do
 
       it { is_expected.to be_invalid }
     end
+
+    context 'when updating' do
+      subject(:access_token) { create(:access_token) }
+
+      let(:other_user) { create(:user) }
+
+      it do
+        expect { access_token.update(user: other_user) && access_token.reload }
+          .not_to change(access_token, :user)
+      end
+    end
   end
 
   describe '#token' do
     context 'when is nil' do
       subject(:access_token) { build(:access_token, token: nil) }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(access_token).to be_valid
         expect(access_token.token).to be_present
       end
@@ -30,7 +41,7 @@ RSpec.describe AccessToken, type: :model do
     context 'when is blank' do
       subject(:access_token) { build(:access_token, token: '') }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(access_token).to be_valid
         expect(access_token.token).to be_present
       end
@@ -87,6 +98,18 @@ RSpec.describe AccessToken, type: :model do
           .to be_added(:token, :taken, { value: first_access_token.token })
       end
     end
+
+    context 'when updating' do
+      subject(:access_token) { create(:access_token) }
+
+      let(:encrypted_token) { Digest::SHA256.hexdigest(SecureRandom.base58) }
+
+      it do
+        expect do
+          access_token.update(token: encrypted_token) && access_token.reload
+        end.not_to change(access_token, :token)
+      end
+    end
   end
 
   describe '#revoked_at' do
@@ -96,7 +119,7 @@ RSpec.describe AccessToken, type: :model do
       it { is_expected.to be_valid }
     end
 
-    context 'when is setted on creation' do
+    context 'when is set at creation' do
       subject(:access_token) { build(:access_token, revoked_at: Time.current) }
 
       it { is_expected.to be_invalid }
@@ -164,7 +187,7 @@ RSpec.describe AccessToken, type: :model do
     describe '.usable' do
       subject(:usable_access_tokens) { described_class.usable }
 
-      context 'when it has not yet expired' do
+      context 'when at least one is usable' do
         before { create_list(:access_token, 2) }
 
         it 'must order tokens by created_at desc', :aggregate_failures do
@@ -174,17 +197,34 @@ RSpec.describe AccessToken, type: :model do
         end
       end
 
-      # TODO: create a context with ttl setted as env
-      context 'when it has expired - default TTL' do
-        let(:access_token_ttl) { described_class::TTL }
+      context 'when at least one has expired - default TTL' do
+        let(:default_ttl_in_minutes) { described_class.ttl_in_minutes }
 
         before do
-          travel_to(access_token_ttl.ago) { create(:access_token) }
+          travel_to(default_ttl_in_minutes.ago) { create(:access_token) }
           create(:access_token)
         end
 
         it :aggregate_failures do
           expect(usable_access_tokens.count).to eq(1)
+          expect(described_class.count).to eq(2)
+        end
+      end
+
+      context 'when at least one has expired - custom TTL' do
+        subject(:access_token) { create(:access_token) }
+
+        let(:default_ttl_in_minutes) { described_class.ttl_in_minutes }
+        let(:custom_ttl_in_minutes) { 60 }
+
+        before do
+          travel_to(default_ttl_in_minutes.ago) { create(:access_token) }
+          stub_const('AccessToken::TTL', custom_ttl_in_minutes)
+          create(:access_token)
+        end
+
+        it :aggregate_failures do
+          expect(usable_access_tokens.count).to eq(2)
           expect(described_class.count).to eq(2)
         end
       end
