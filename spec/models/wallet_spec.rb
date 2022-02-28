@@ -134,6 +134,44 @@ RSpec.describe Wallet, type: :model do
     end
   end
 
+  describe '#balance' do
+    context 'when is nil' do
+      subject(:wallet) { build(:wallet, balance: nil) }
+
+      it { is_expected.to be_invalid }
+    end
+
+    context 'when is less than -999_999_999.99' do
+      subject(:wallet) { build(:wallet, balance: -1_000_000_000.00) }
+
+      it { is_expected.to be_invalid }
+    end
+
+    context 'when is equal to -999_999_999.99' do
+      subject(:wallet) { build(:wallet, balance: -999_999_999.99) }
+
+      it { is_expected.to be_valid }
+    end
+
+    context 'when is equal to zero' do
+      subject(:wallet) { build(:wallet, balance: 0.00) }
+
+      it { is_expected.to be_valid }
+    end
+
+    context 'when is equal to 999_999_999.99' do
+      subject(:wallet) { build(:wallet, balance: 999_999_999.99) }
+
+      it { is_expected.to be_valid }
+    end
+
+    context 'when is greater than 999_999_999.99' do
+      subject(:wallet) { build(:wallet, balance: 1_000_000_000.00) }
+
+      it { is_expected.to be_invalid }
+    end
+  end
+
   describe 'dependent destroy' do
     context 'with payment' do
       let(:wallet) { create(:wallet, :with_payment) }

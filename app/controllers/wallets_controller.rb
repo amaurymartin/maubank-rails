@@ -39,7 +39,9 @@ class WalletsController < ApplicationController
   private
 
   def wallet_params
-    params.require(:wallet).permit(:description)
+    params.require(:wallet).permit(
+      action_name == 'create' ? %i[description balance] : :description
+    )
   end
 
   def set_wallet
