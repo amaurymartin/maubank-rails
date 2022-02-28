@@ -6,7 +6,7 @@ RSpec.describe 'Wallets', type: :request do
   let(:user) { create(:user) }
   let(:response_body) { JSON.parse(response.body).deep_symbolize_keys }
   let(:wallet_show_json_keys) do
-    %i[user_key key description created_at updated_at]
+    %i[user_key key description balance created_at updated_at]
   end
   let(:wallet_links_json_keys) { :user }
 
