@@ -3,6 +3,8 @@
 class Wallet < ApplicationRecord
   include Keyable
 
+  attr_readonly :user_id, :key
+
   belongs_to :user
 
   has_many :payments, dependent: :delete_all

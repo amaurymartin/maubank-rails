@@ -15,6 +15,17 @@ RSpec.describe Wallet, type: :model do
 
       it { is_expected.to be_invalid }
     end
+
+    context 'when updating' do
+      subject(:wallet) { create(:wallet) }
+
+      let(:other_user) { create(:user) }
+
+      it do
+        expect { wallet.update(user: other_user) && wallet.reload }
+          .not_to change(wallet, :user)
+      end
+    end
   end
 
   describe '#key' do
@@ -53,6 +64,15 @@ RSpec.describe Wallet, type: :model do
       let(:first_wallet) { create(:wallet) }
 
       it { is_expected.to be_invalid }
+    end
+
+    context 'when updating' do
+      subject(:wallet) { create(:wallet) }
+
+      it do
+        expect { wallet.update(key: SecureRandom.uuid) && wallet.reload }
+          .not_to change(wallet, :key)
+      end
     end
   end
 
