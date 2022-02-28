@@ -15,6 +15,17 @@ RSpec.describe Goal, type: :model do
 
       it { is_expected.to be_invalid }
     end
+
+    context 'when updating' do
+      subject(:goal) { create(:goal) }
+
+      let(:other_user) { create(:user) }
+
+      it do
+        expect { goal.update(user: other_user) && goal.reload }
+          .not_to change(goal, :user)
+      end
+    end
   end
 
   describe '#key' do
@@ -53,6 +64,15 @@ RSpec.describe Goal, type: :model do
       let(:first_goal) { create(:goal) }
 
       it { is_expected.to be_invalid }
+    end
+
+    context 'when updating' do
+      subject(:goal) { create(:goal) }
+
+      it do
+        expect { goal.update(key: SecureRandom.uuid) && goal.reload }
+          .not_to change(goal, :key)
+      end
     end
   end
 

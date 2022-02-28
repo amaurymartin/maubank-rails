@@ -3,6 +3,8 @@
 class Goal < ApplicationRecord
   include Keyable
 
+  attr_readonly :user_id, :key
+
   belongs_to :user
 
   validates :key, presence: true, uniqueness: true
