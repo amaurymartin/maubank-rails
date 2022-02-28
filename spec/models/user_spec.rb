@@ -121,6 +121,20 @@ RSpec.describe User, type: :model do
           .to be_added(:username, :taken, { value: first_user.username })
       end
     end
+
+    context 'when already taken case insensitive' do
+      subject(:second_user) do
+        build(:user, username: first_user.username.upcase)
+      end
+
+      let(:first_user) { create(:user) }
+
+      it 'upper and lower case must be seen as style', :aggregate_failures do
+        expect(second_user).to be_invalid
+        expect(second_user.errors)
+          .to be_added(:username, :taken, { value: first_user.username.upcase })
+      end
+    end
   end
 
   describe '#email' do
@@ -148,6 +162,20 @@ RSpec.describe User, type: :model do
       let(:first_user) { create(:user) }
 
       it { is_expected.to be_invalid }
+    end
+
+    context 'when already taken case insensitive' do
+      subject(:second_user) do
+        build(:user, email: first_user.email.upcase)
+      end
+
+      let(:first_user) { create(:user) }
+
+      it 'emails must be case insensitive', :aggregate_failures do
+        expect(second_user).to be_invalid
+        expect(second_user.errors)
+          .to be_added(:email, :taken, { value: first_user.email.upcase })
+      end
     end
 
     context 'when updating' do

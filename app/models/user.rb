@@ -24,8 +24,11 @@ class User < ApplicationRecord
   validates :key, presence: true, uniqueness: true
   validates :full_name, presence: true, allow_nil: true
   validates :nickname, presence: true
-  validates :username, presence: true, uniqueness: true, allow_nil: true
-  validates :email, presence: true, uniqueness: true
+  validates :username,
+            presence: true,
+            uniqueness: { case_sensitive: false },
+            allow_nil: true
+  validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates_email_format_of :email, disposable: true
   validate :cannot_born_in_the_future
   validates :confirmed_at, absence: true, on: :create
