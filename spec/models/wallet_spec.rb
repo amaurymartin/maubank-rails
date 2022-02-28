@@ -89,7 +89,7 @@ RSpec.describe Wallet, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when is already taken by same user' do
+    context 'when already taken by same user' do
       subject(:second_wallet) do
         build(:wallet,
               user: first_wallet.user,
@@ -98,10 +98,15 @@ RSpec.describe Wallet, type: :model do
 
       let(:first_wallet) { create(:wallet) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_wallet).to be_invalid
+        expect(second_wallet.errors).to be_added(
+          :description, :taken, { value: first_wallet.description }
+        )
+      end
     end
 
-    context 'when is already taken by same user case insensitive' do
+    context 'when already taken by same user case insensitive' do
       subject(:second_wallet) do
         build(:wallet,
               user: first_wallet.user,
@@ -110,10 +115,15 @@ RSpec.describe Wallet, type: :model do
 
       let(:first_wallet) { create(:wallet) }
 
-      it { is_expected.to be_invalid }
+      it 'must be case insensitive', :aggregate_failures do
+        expect(second_wallet).to be_invalid
+        expect(second_wallet.errors).to be_added(
+          :description, :taken, { value: first_wallet.description.upcase }
+        )
+      end
     end
 
-    context 'when is already taken by other user' do
+    context 'when already taken by other user' do
       subject(:second_wallet) do
         build(:wallet, description: first_wallet.description)
       end
