@@ -3,6 +3,8 @@
 class Category < ApplicationRecord
   include Keyable
 
+  attr_readonly :user_id, :key
+
   belongs_to :user
 
   has_many :budgets, dependent: :destroy
