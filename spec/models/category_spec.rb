@@ -15,6 +15,17 @@ RSpec.describe Category, type: :model do
 
       it { is_expected.to be_invalid }
     end
+
+    context 'when is ready-only' do
+      subject(:category) { create(:category) }
+
+      let(:other_user) { create(:user) }
+
+      it do
+        expect { category.update(user: other_user) && category.reload }
+          .not_to change(category, :user)
+      end
+    end
   end
 
   describe '#key' do
@@ -53,6 +64,15 @@ RSpec.describe Category, type: :model do
       let(:first_category) { create(:category) }
 
       it { is_expected.to be_invalid }
+    end
+
+    context 'when is ready-only' do
+      subject(:category) { create(:category) }
+
+      it do
+        expect { category.update(key: SecureRandom.uuid) && category.reload }
+          .not_to change(category, :key)
+      end
     end
   end
 
