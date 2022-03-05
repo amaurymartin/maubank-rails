@@ -103,7 +103,7 @@ RSpec.describe Budget, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when is already taken by same category' do
+    context 'when already taken by same category' do
       subject(:second_budget) do
         build(:budget,
               category: first_budget.category,
@@ -115,7 +115,7 @@ RSpec.describe Budget, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when is already taken by other category' do
+    context 'when already taken by other category' do
       subject(:second_budget) do
         build(:budget, starts_at: first_budget.starts_at)
       end
