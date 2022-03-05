@@ -69,7 +69,7 @@ RSpec.describe Category, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when is already taken by same user' do
+    context 'when already taken by same user' do
       subject(:second_category) do
         build(:category,
               user: first_category.user,
@@ -81,7 +81,7 @@ RSpec.describe Category, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when is already taken by same user case insensitive' do
+    context 'when already taken by same user case insensitive' do
       subject(:second_category) do
         build(:category,
               user: first_category.user,
@@ -93,7 +93,7 @@ RSpec.describe Category, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when is already taken by other user' do
+    context 'when already taken by other user' do
       subject(:second_category) do
         build(:category, description: first_category.description)
       end
