@@ -51,7 +51,7 @@ RSpec.describe User, type: :model do
       end
     end
 
-    context 'when is ready-only' do
+    context 'when is read-only' do
       subject(:user) { create(:user) }
 
       it do
@@ -178,7 +178,7 @@ RSpec.describe User, type: :model do
       end
     end
 
-    context 'when is ready-only' do
+    context 'when is read-only' do
       subject(:user) { create(:user) }
 
       it do

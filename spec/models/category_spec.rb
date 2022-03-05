@@ -16,7 +16,7 @@ RSpec.describe Category, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when is ready-only' do
+    context 'when is read-only' do
       subject(:category) { create(:category) }
 
       let(:other_user) { create(:user) }
@@ -66,7 +66,7 @@ RSpec.describe Category, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when is ready-only' do
+    context 'when is read-only' do
       subject(:category) { create(:category) }
 
       it do
