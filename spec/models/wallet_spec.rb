@@ -16,7 +16,7 @@ RSpec.describe Wallet, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when updating' do
+    context 'when is ready-only' do
       subject(:wallet) { create(:wallet) }
 
       let(:other_user) { create(:user) }
@@ -66,7 +66,7 @@ RSpec.describe Wallet, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when updating' do
+    context 'when is ready-only' do
       subject(:wallet) { create(:wallet) }
 
       it do
