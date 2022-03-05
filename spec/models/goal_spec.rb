@@ -15,6 +15,17 @@ RSpec.describe Goal, type: :model do
 
       it { is_expected.to be_invalid }
     end
+
+    context 'when updating' do
+      subject(:goal) { create(:goal) }
+
+      let(:other_user) { create(:user) }
+
+      it do
+        expect { goal.update(user: other_user) && goal.reload }
+          .not_to change(goal, :user)
+      end
+    end
   end
 
   describe '#key' do
@@ -54,6 +65,15 @@ RSpec.describe Goal, type: :model do
 
       it { is_expected.to be_invalid }
     end
+
+    context 'when updating' do
+      subject(:goal) { create(:goal) }
+
+      it do
+        expect { goal.update(key: SecureRandom.uuid) && goal.reload }
+          .not_to change(goal, :key)
+      end
+    end
   end
 
   describe '#description' do
@@ -69,7 +89,7 @@ RSpec.describe Goal, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when is already taken by same user' do
+    context 'when already taken by same user' do
       subject(:second_goal) do
         build(:goal,
               user: first_goal.user,
@@ -81,7 +101,7 @@ RSpec.describe Goal, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when is already taken by same user case insensitive' do
+    context 'when already taken by same user case insensitive' do
       subject(:second_goal) do
         build(:goal,
               user: first_goal.user,
@@ -90,10 +110,15 @@ RSpec.describe Goal, type: :model do
 
       let(:first_goal) { create(:goal) }
 
-      it { is_expected.to be_invalid }
+      it 'must be case insensitive', :aggregate_failures do
+        expect(second_goal).to be_invalid
+        expect(second_goal.errors).to be_added(
+          :description, :taken, { value: first_goal.description.upcase }
+        )
+      end
     end
 
-    context 'when is already taken by other user' do
+    context 'when already taken by other user' do
       subject(:second_goal) do
         build(:goal, description: first_goal.description)
       end
@@ -154,7 +179,15 @@ RSpec.describe Goal, type: :model do
     context 'when is before starts_at' do
       subject(:user) { build(:goal, ends_at: starts_at - 1.day) }
 
-      let(:starts_at) { Time.zone.today.beginning_of_year }
+      let(:starts_at) { Date.current.beginning_of_year }
+
+      it { is_expected.to be_invalid }
+    end
+
+    context 'when is equal starts_at' do
+      subject(:user) { build(:goal, ends_at: starts_at) }
+
+      let(:starts_at) { Date.current.beginning_of_year }
 
       it { is_expected.to be_invalid }
     end
