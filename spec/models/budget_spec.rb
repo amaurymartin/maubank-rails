@@ -23,6 +23,17 @@ RSpec.describe Budget, type: :model do
 
       it { is_expected.to be_invalid }
     end
+
+    context 'when is read-only' do
+      subject(:budget) { create(:budget) }
+
+      let(:other_category) { create(:category) }
+
+      it do
+        expect { budget.update(category: other_category) && budget.reload }
+          .not_to change(budget, :category)
+      end
+    end
   end
 
   describe '#key' do
@@ -61,6 +72,15 @@ RSpec.describe Budget, type: :model do
       let(:first_budget) { create(:budget) }
 
       it { is_expected.to be_invalid }
+    end
+
+    context 'when is read-only' do
+      subject(:budget) { create(:budget) }
+
+      it do
+        expect { budget.update(key: SecureRandom.uuid) && budget.reload }
+          .not_to change(budget, :key)
+      end
     end
   end
 

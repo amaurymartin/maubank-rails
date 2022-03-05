@@ -3,6 +3,8 @@
 class Budget < ApplicationRecord
   include Keyable
 
+  attr_readonly :category_id, :key
+
   belongs_to :category
 
   validates :key, presence: true, uniqueness: true
