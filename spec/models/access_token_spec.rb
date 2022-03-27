@@ -16,7 +16,7 @@ RSpec.describe AccessToken, type: :model do
       it { is_expected.to be_invalid }
     end
 
-    context 'when is ready-only' do
+    context 'when is read-only' do
       subject(:access_token) { create(:access_token) }
 
       let(:other_user) { create(:user) }
@@ -99,7 +99,7 @@ RSpec.describe AccessToken, type: :model do
       end
     end
 
-    context 'when is ready-only' do
+    context 'when is read-only' do
       subject(:access_token) { create(:access_token) }
 
       let(:encrypted_token) { Digest::SHA256.hexdigest(SecureRandom.base58) }
