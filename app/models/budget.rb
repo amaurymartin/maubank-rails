@@ -24,6 +24,10 @@ class Budget < ApplicationRecord
 
   delegate :user, to: :category
 
+  scope :endless_for, lambda { |category|
+    where(category:).where(ends_at: nil).order(starts_at: :asc)
+  }
+
   scope :for, lambda { |date|
     where('? BETWEEN starts_at AND ends_at', date)
       .or(where('? >= starts_at', date).where(ends_at: nil))
@@ -68,9 +72,7 @@ class Budget < ApplicationRecord
   end
 
   def update_endless_budgets
-    endless_budgets = category.budgets.reload.select { |b| b.ends_at.nil? }
-
-    endless_budgets.each do |endless_budget|
+    Budget.endless_for(category).each do |endless_budget|
       new_ends_at =
         if endless_budget.starts_at > starts_at
           endless_budget.starts_at.end_of_month

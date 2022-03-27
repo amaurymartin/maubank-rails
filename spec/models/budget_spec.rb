@@ -317,6 +317,62 @@ RSpec.describe Budget, type: :model do
   end
 
   describe 'scopes' do
+    describe '.endless_for' do
+      subject(:endless_budget_for_category) do
+        described_class.endless_for(category)
+      end
+
+      let!(:endless_budget) { create(:budget, category:, ends_at:) }
+      let(:category) { create(:category) }
+      let(:ends_at) { nil }
+
+      context 'without endless budget for category' do
+        let(:ends_at) { Date.current }
+
+        it { is_expected.to be_empty }
+      end
+
+      context 'with a uniq endless budget for category' do
+        it 'must return endless budget', :aggregate_failures do
+          expect(endless_budget_for_category.first).to eq(endless_budget)
+          expect(endless_budget_for_category.count).to eq(1)
+        end
+      end
+
+      context 'with more than one endless budget for category' do
+        let(:other_endless_budget) do
+          build(:budget,
+                key: SecureRandom.uuid,
+                starts_at: Date.current.beginning_of_month + 1.month,
+                category:,
+                ends_at:)
+        end
+
+        before do
+          # rubocop:disable RSpec/AnyInstance
+          allow_any_instance_of(described_class)
+            .to receive(:update_endless_budgets).and_return(nil)
+          # rubocop:enable RSpec/AnyInstance
+
+          other_endless_budget.save
+        end
+
+        it 'must return all endless budgets ordered', :aggregate_failures do
+          expect(endless_budget_for_category.count).to eq(2)
+          expect(endless_budget_for_category.first).to eq(endless_budget)
+          expect(endless_budget_for_category.second).to eq(other_endless_budget)
+        end
+      end
+
+      context 'with endless budget for another category' do
+        subject(:endless_budget_for_category) do
+          described_class.endless_for(create(:category))
+        end
+
+        it { is_expected.to be_empty }
+      end
+    end
+
     describe '.for' do
       subject(:budgets_for_date) { described_class.for(date) }
 
