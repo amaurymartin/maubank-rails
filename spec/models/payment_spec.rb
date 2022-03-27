@@ -70,6 +70,15 @@ RSpec.describe Payment, type: :model do
 
       it { is_expected.to be_invalid }
     end
+
+    context 'when is read-only' do
+      subject(:payment) { create(:payment) }
+
+      it do
+        expect { payment.update(key: SecureRandom.uuid) && payment.reload }
+          .not_to change(payment, :key)
+      end
+    end
   end
 
   describe '#effective_date' do
