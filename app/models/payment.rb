@@ -3,7 +3,7 @@
 class Payment < ApplicationRecord
   include Keyable
 
-  attr_readonly :key
+  attr_readonly :key, :created_at
 
   belongs_to :category, optional: true
   belongs_to :wallet

@@ -3,7 +3,7 @@
 class Budget < ApplicationRecord
   include Keyable
 
-  attr_readonly :category_id, :key
+  attr_readonly :category_id, :key, :created_at
 
   belongs_to :category
 

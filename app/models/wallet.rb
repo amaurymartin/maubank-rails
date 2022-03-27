@@ -3,7 +3,7 @@
 class Wallet < ApplicationRecord
   include Keyable
 
-  attr_readonly :user_id, :key
+  attr_readonly :user_id, :key, :created_at
 
   belongs_to :user
 

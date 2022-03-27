@@ -192,4 +192,15 @@ RSpec.describe Goal, type: :model do
       it { is_expected.to be_invalid }
     end
   end
+
+  describe '#created_at' do
+    context 'when is read-only' do
+      subject(:goal) { create(:goal) }
+
+      it do
+        expect { goal.update(created_at: Time.current) && goal.reload }
+          .not_to change(goal, :created_at)
+      end
+    end
+  end
 end

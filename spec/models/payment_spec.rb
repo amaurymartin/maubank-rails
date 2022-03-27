@@ -126,4 +126,15 @@ RSpec.describe Payment, type: :model do
       it { is_expected.to be_invalid }
     end
   end
+
+  describe '#created_at' do
+    context 'when is read-only' do
+      subject(:payment) { create(:payment) }
+
+      it do
+        expect { payment.update(created_at: Time.current) && payment.reload }
+          .not_to change(payment, :created_at)
+      end
+    end
+  end
 end

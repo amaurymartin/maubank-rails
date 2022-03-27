@@ -126,6 +126,18 @@ RSpec.describe AccessToken, type: :model do
     end
   end
 
+  describe '#created_at' do
+    context 'when is read-only' do
+      subject(:access_token) { create(:access_token) }
+
+      it do
+        expect do
+          access_token.update(created_at: Time.current) && access_token.reload
+        end.not_to change(access_token, :created_at)
+      end
+    end
+  end
+
   describe '#revoke!' do
     context 'when not yet revoked' do
       subject(:access_token) { create(:access_token) }

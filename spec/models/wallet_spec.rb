@@ -172,6 +172,17 @@ RSpec.describe Wallet, type: :model do
     end
   end
 
+  describe '#created_at' do
+    context 'when is read-only' do
+      subject(:wallet) { create(:wallet) }
+
+      it do
+        expect { wallet.update(created_at: Time.current) && wallet.reload }
+          .not_to change(wallet, :created_at)
+      end
+    end
+  end
+
   describe 'dependent destroy' do
     context 'with payment' do
       let(:wallet) { create(:wallet, :with_payment) }

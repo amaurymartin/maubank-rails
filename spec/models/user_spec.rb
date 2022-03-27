@@ -327,6 +327,17 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe '#created_at' do
+    context 'when is read-only' do
+      subject(:user) { create(:user) }
+
+      it do
+        expect { user.update(created_at: Time.current) && user.reload }
+          .not_to change(user, :created_at)
+      end
+    end
+  end
+
   describe '#confirm!' do
     context 'when not yet confirmed' do
       subject(:user) { create(:user) }

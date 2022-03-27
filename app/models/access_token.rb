@@ -3,7 +3,7 @@
 class AccessToken < ApplicationRecord
   TTL = ENV.fetch('ACCESS_TOKEN_TTL', 30).to_i
 
-  attr_readonly :user_id, :token
+  attr_readonly :user_id, :token, :created_at
 
   belongs_to :user
 

@@ -326,6 +326,17 @@ RSpec.describe Budget, type: :model do
     end
   end
 
+  describe '#created_at' do
+    context 'when is read-only' do
+      subject(:budget) { create(:budget) }
+
+      it do
+        expect { budget.update(created_at: Time.current) && budget.reload }
+          .not_to change(budget, :created_at)
+      end
+    end
+  end
+
   describe 'scopes' do
     describe '.endless_for' do
       subject(:endless_budget_for_category) do

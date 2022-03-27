@@ -124,6 +124,17 @@ RSpec.describe Category, type: :model do
     end
   end
 
+  describe '#created_at' do
+    context 'when is read-only' do
+      subject(:category) { create(:category) }
+
+      it do
+        expect { category.update(created_at: Time.current) && category.reload }
+          .not_to change(category, :created_at)
+      end
+    end
+  end
+
   describe '#budget_for' do
     subject(:budget_for) { category.budget_for(date) }
 
