@@ -297,6 +297,16 @@ RSpec.describe Budget, type: :model do
       it { is_expected.to be_valid }
     end
 
+    context 'when is before starts_at' do
+      subject(:budget) do
+        build(:budget, starts_at: Date.current, ends_at: starts_at - 1.day)
+      end
+
+      let(:starts_at) { Date.current.beginning_of_month }
+
+      it { is_expected.to be_invalid }
+    end
+
     context 'when is not in the same month as starts_at - present' do
       subject(:budget) do
         build(:budget, starts_at: Date.current, ends_at: Date.current + 1.month)
