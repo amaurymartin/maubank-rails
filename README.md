@@ -5,8 +5,8 @@ The development tools are listed below.
 ---
 
 ## Dependencies
-- [Ruby v3.1.0](https://www.ruby-lang.org/en/downloads/)
-- [Rails v7.0.2](https://guides.rubyonrails.org/getting_started.html)
+- [Ruby v3.1.1](https://www.ruby-lang.org/en/downloads/)
+- [Rails v7.0.2.3](https://guides.rubyonrails.org/getting_started.html)
 ---
 
 ## Set up

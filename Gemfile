@@ -3,19 +3,19 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.1.0'
+ruby '3.1.1'
 
 gem 'bcrypt', '~> 3.1.7'
 gem 'bootsnap', require: false
 gem 'cpf_cnpj'
 gem 'dotenv-rails'
 # gem 'image_processing', '~> 1.2'
-gem 'jbuilder', '~> 2.7'
+gem 'jbuilder'
 # gem 'kredis'
 gem 'pg', '~> 1.1'
 gem 'puma', '~> 5.0'
 # gem 'rack-cors'
-gem 'rails', '~> 7.0.2', '>= 7.0.2.2'
+gem 'rails', '~> 7.0.2', '>= 7.0.2.3'
 # gem 'redis', '~> 4.0'
 gem 'root_domain'
 gem 'validators'
