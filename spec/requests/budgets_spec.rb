@@ -6,10 +6,10 @@ RSpec.describe 'Budgets', type: :request do
   let(:user) { create(:user) }
   let(:category) { create(:category, user:) }
   let(:response_body) { JSON.parse(response.body).deep_symbolize_keys }
-  let(:budget_show_json_keys) do
-    %i[user_key category_key key amount starts_at ends_at created_at updated_at]
-  end
-  let(:budget_links_json_keys) { %i[user category] }
+  let(:user_keys) { %i[key] }
+  let(:category_keys) { %i[key description] }
+  let(:budget_keys) { %i[key amount starts_at ends_at created_at updated_at] }
+  let(:links_keys) { %i[user category self] }
 
   describe 'POST /categories/:category_key/budgets' do
     def make_request
@@ -24,11 +24,12 @@ RSpec.describe 'Budgets', type: :request do
       it :aggregate_failures do
         expect { make_request }.to change(Budget, :count).by(1)
         expect(response).to have_http_status(:created)
-        expect(response_body[:budget].keys)
-          .to match_array budget_show_json_keys
-        expect(response_body[:links].keys)
-          .to match_array budget_links_json_keys
+        expect(response_body[:user].keys).to match_array(user_keys)
+        expect(response_body[:category].keys).to match_array(category_keys)
+        expect(response_body[:budget].keys).to match_array(budget_keys)
+        expect(response_body[:links].keys).to match_array(links_keys)
         expect(Budget.last.user).to eq(user)
+        expect(Budget.last.category).to eq(category)
       end
     end
 
@@ -42,7 +43,7 @@ RSpec.describe 'Budgets', type: :request do
       end
     end
 
-    context 'when category do not belongs to logged user' do
+    context 'when category does not belongs to current user' do
       let(:budget_create_params) { attributes_for(:budget) }
       let(:category) { create(:category) }
 
@@ -63,15 +64,17 @@ RSpec.describe 'Budgets', type: :request do
 
     before { make_request }
 
-    context 'when budget belongs to logged user' do
+    context 'when budget belongs to current user' do
       it :aggregate_failures do
         expect(response).to have_http_status(:ok)
-        expect(response_body[:budget].keys).to match_array budget_show_json_keys
-        expect(response_body[:links].keys).to match_array budget_links_json_keys
+        expect(response_body[:user].keys).to match_array(user_keys)
+        expect(response_body[:category].keys).to match_array(category_keys)
+        expect(response_body[:budget].keys).to match_array(budget_keys)
+        expect(response_body[:links].keys).to match_array(links_keys)
       end
     end
 
-    context 'when budget not belongs to logged user' do
+    context 'when budget does not belongs to current user' do
       let(:budget) { create(:budget) }
 
       it :aggregate_failures do
@@ -80,7 +83,7 @@ RSpec.describe 'Budgets', type: :request do
       end
     end
 
-    context 'with invalid key' do
+    context 'when key is invalid' do
       let(:budget) { 'invalid' }
 
       it :aggregate_failures do
@@ -102,8 +105,10 @@ RSpec.describe 'Budgets', type: :request do
       it :aggregate_failures do
         expect { make_request and budget.reload }.to change(budget, :attributes)
         expect(response).to have_http_status(:ok)
-        expect(response_body[:budget].keys).to match_array budget_show_json_keys
-        expect(response_body[:links].keys).to match_array budget_links_json_keys
+        expect(response_body[:user].keys).to match_array(user_keys)
+        expect(response_body[:category].keys).to match_array(category_keys)
+        expect(response_body[:budget].keys).to match_array(budget_keys)
+        expect(response_body[:links].keys).to match_array(links_keys)
       end
     end
 
@@ -118,7 +123,7 @@ RSpec.describe 'Budgets', type: :request do
       end
     end
 
-    context 'with another users budget' do
+    context 'when budget does not belongs to current user' do
       let(:budget) { create(:budget) }
 
       it :aggregate_failures do
@@ -129,7 +134,7 @@ RSpec.describe 'Budgets', type: :request do
       end
     end
 
-    context 'with invalid key' do
+    context 'when key is invalid' do
       let(:budget) { 'invalid' }
 
       before { make_request }
@@ -149,16 +154,16 @@ RSpec.describe 'Budgets', type: :request do
     end
 
     let(:budget) { create(:budget, category:) }
-    let(:budget_patch_params) do
-      attributes_for(:budget, description: 'Patched')
-    end
+    let(:budget_patch_params) { attributes_for :budget, description: 'Patched' }
 
     context 'with both key and params valid' do
       it :aggregate_failures do
         expect { make_request and budget.reload }.to change(budget, :attributes)
         expect(response).to have_http_status(:ok)
-        expect(response_body[:budget].keys).to match_array budget_show_json_keys
-        expect(response_body[:links].keys).to match_array budget_links_json_keys
+        expect(response_body[:user].keys).to match_array(user_keys)
+        expect(response_body[:category].keys).to match_array(category_keys)
+        expect(response_body[:budget].keys).to match_array(budget_keys)
+        expect(response_body[:links].keys).to match_array(links_keys)
       end
     end
 
@@ -173,7 +178,7 @@ RSpec.describe 'Budgets', type: :request do
       end
     end
 
-    context 'with another users key' do
+    context 'when key does not belongs to current user' do
       let(:budget) { create(:budget) }
 
       it :aggregate_failures do
@@ -184,7 +189,7 @@ RSpec.describe 'Budgets', type: :request do
       end
     end
 
-    context 'with invalid key' do
+    context 'when key is invalid' do
       let(:budget) { 'invalid' }
 
       before { make_request }
@@ -203,7 +208,7 @@ RSpec.describe 'Budgets', type: :request do
 
     let!(:budget) { create(:budget, category:) }
 
-    context 'with valid key' do
+    context 'when key is valid' do
       it :aggregate_failures do
         expect { make_request }.to change(Budget, :count).by(-1)
         expect(response).to have_http_status(:no_content)
@@ -226,7 +231,7 @@ RSpec.describe 'Budgets', type: :request do
       end
     end
 
-    context 'with another users key' do
+    context 'when key does not belongs to current user' do
       let(:budget) { create(:budget) }
 
       it :aggregate_failures do
@@ -236,7 +241,7 @@ RSpec.describe 'Budgets', type: :request do
       end
     end
 
-    context 'with invalid key' do
+    context 'when key is invalid' do
       let(:budget) { 'invalid' }
 
       it :aggregate_failures do
