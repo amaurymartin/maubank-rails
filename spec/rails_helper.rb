@@ -31,3 +31,5 @@ RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
   config.include Authentication, type: :request
 end
+
+RSpec::Matchers.define_negated_matcher :not_change, :change
