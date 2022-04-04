@@ -19,4 +19,8 @@ class Wallet < ApplicationRecord
   def to_param
     key
   end
+
+  def update_balance(amount)
+    update(balance: balance + amount.to_f)
+  end
 end

@@ -183,6 +183,74 @@ RSpec.describe Wallet, type: :model do
     end
   end
 
+  describe '#update_balance' do
+    subject(:wallet) { create(:wallet) }
+
+    context 'when amount is nil' do
+      it do
+        expect { wallet.update_balance(nil) }
+          .to(not_change { wallet.reload.balance }
+            .and(not_change { wallet.reload.updated_at }))
+      end
+    end
+
+    context 'when amount is not a number' do
+      it do
+        expect { wallet.update_balance('not_a_number') }
+          .to(not_change { wallet.reload.balance }
+            .and(not_change { wallet.reload.updated_at }))
+      end
+    end
+
+    context 'when amount is zero' do
+      it do
+        expect { wallet.update_balance(0.00) }
+          .to(not_change { wallet.reload.balance }
+            .and(not_change { wallet.reload.updated_at }))
+      end
+    end
+
+    context 'when new balance is less than -999_999_999.99' do
+      it do
+        expect { wallet.update_balance(-1_000_000_000.00 - wallet.balance) }
+          .to(not_change { wallet.reload.balance }
+            .and(not_change { wallet.reload.updated_at }))
+      end
+    end
+
+    context 'when new balance is equal to -999_999_999.99' do
+      it do
+        expect { wallet.update_balance(-999_999_999.99 - wallet.balance) }
+          .to(change { wallet.reload.balance }
+            .and(change { wallet.reload.updated_at }))
+      end
+    end
+
+    context 'when new balance is equal to zero' do
+      it do
+        expect { wallet.update_balance(0.00 - wallet.balance) }
+          .to(change { wallet.reload.balance }
+            .and(change { wallet.reload.updated_at }))
+      end
+    end
+
+    context 'when new balance is equal to 999_999_999.99' do
+      it do
+        expect { wallet.update_balance(999_999_999.99 - wallet.balance) }
+          .to(change { wallet.reload.balance }
+            .and(change { wallet.reload.updated_at }))
+      end
+    end
+
+    context 'when new balance is greater than 999_999_999.99' do
+      it do
+        expect { wallet.update_balance(1_000_000_000.00 - wallet.balance) }
+          .to(not_change { wallet.reload.balance }
+            .and(not_change { wallet.reload.updated_at }))
+      end
+    end
+  end
+
   describe 'dependent destroy' do
     context 'with payment' do
       let(:wallet) { create(:wallet, :with_payment) }

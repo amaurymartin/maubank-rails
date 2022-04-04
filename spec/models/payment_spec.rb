@@ -137,4 +137,71 @@ RSpec.describe Payment, type: :model do
       end
     end
   end
+
+  describe '#update_wallet_balance' do
+    describe 'on_create' do
+      let(:payment) { build(:payment, amount:) }
+
+      before do
+        allow(payment).to receive(:update_wallet_balance)
+        payment.save
+      end
+
+      context "when new payment's amount is negative" do
+        let(:amount) { -4.20 }
+
+        it { expect(payment).to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is zero" do
+        let(:amount) { 0 }
+
+        it { expect(payment).not_to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is positive" do
+        let(:amount) { 4.20 }
+
+        it { expect(payment).to have_received(:update_wallet_balance) }
+      end
+    end
+
+    describe 'on_update' do
+      let(:payment) { create(:payment, amount: 4.20) }
+
+      before do
+        allow(payment).to receive(:update_wallet_balance)
+      end
+
+      context "when new payment's amount is negative" do
+        before { payment.update(amount: -4.20) }
+
+        it { expect(payment).to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is zero" do
+        before { payment.update(amount: 0) }
+
+        it { expect(payment).not_to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is positive" do
+        before { payment.update(amount: 420) }
+
+        it { expect(payment).to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is the same" do
+        before { payment.update(amount: payment.amount) }
+
+        it { expect(payment).not_to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is not changed" do
+        before { payment.update(category: nil) }
+
+        it { expect(payment).not_to have_received(:update_wallet_balance) }
+      end
+    end
+  end
 end

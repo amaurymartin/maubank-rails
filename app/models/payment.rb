@@ -16,9 +16,17 @@ class Payment < ApplicationRecord
     less_than: 1_000_000_000.00
   }
 
+  before_save :update_wallet_balance, if: -> { new_record? || amount_changed? }
+
   delegate :user, to: :wallet
 
   def to_param
     key
+  end
+
+  private
+
+  def update_wallet_balance
+    wallet.update_balance(amount)
   end
 end
