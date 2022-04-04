@@ -70,6 +70,15 @@ RSpec.describe Payment, type: :model do
 
       it { is_expected.to be_invalid }
     end
+
+    context 'when is read-only' do
+      subject(:payment) { create(:payment) }
+
+      it do
+        expect { payment.update(key: SecureRandom.uuid) && payment.reload }
+          .not_to change(payment, :key)
+      end
+    end
   end
 
   describe '#effective_date' do
@@ -115,6 +124,84 @@ RSpec.describe Payment, type: :model do
       subject(:payment) { build(:payment, amount: 1_000_000_000.00) }
 
       it { is_expected.to be_invalid }
+    end
+  end
+
+  describe '#created_at' do
+    context 'when is read-only' do
+      subject(:payment) { create(:payment) }
+
+      it do
+        expect { payment.update(created_at: Time.current) && payment.reload }
+          .not_to change(payment, :created_at)
+      end
+    end
+  end
+
+  describe '#update_wallet_balance' do
+    describe 'on_create' do
+      let(:payment) { build(:payment, amount:) }
+
+      before do
+        allow(payment).to receive(:update_wallet_balance)
+        payment.save
+      end
+
+      context "when new payment's amount is negative" do
+        let(:amount) { -4.20 }
+
+        it { expect(payment).to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is zero" do
+        let(:amount) { 0 }
+
+        it { expect(payment).not_to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is positive" do
+        let(:amount) { 4.20 }
+
+        it { expect(payment).to have_received(:update_wallet_balance) }
+      end
+    end
+
+    describe 'on_update' do
+      let(:payment) { create(:payment, amount: 4.20) }
+
+      before do
+        allow(payment).to receive(:update_wallet_balance)
+      end
+
+      context "when new payment's amount is negative" do
+        before { payment.update(amount: -4.20) }
+
+        it { expect(payment).to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is zero" do
+        before { payment.update(amount: 0) }
+
+        it { expect(payment).not_to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is positive" do
+        before { payment.update(amount: 420) }
+
+        it { expect(payment).to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is the same" do
+        before { payment.update(amount: payment.amount) }
+
+        it { expect(payment).not_to have_received(:update_wallet_balance) }
+      end
+
+      context "when new payment's amount is not changed" do
+        before { payment.update(category: nil) }
+
+        it { expect(payment).not_to have_received(:update_wallet_balance) }
+      end
     end
   end
 end

@@ -163,7 +163,7 @@ RSpec.describe Goal, type: :model do
 
   describe '#starts_at' do
     context 'when is nil' do
-      subject(:user) { build(:goal, starts_at: nil) }
+      subject(:goal) { build(:goal, starts_at: nil) }
 
       it { is_expected.to be_invalid }
     end
@@ -171,13 +171,13 @@ RSpec.describe Goal, type: :model do
 
   describe '#ends_at' do
     context 'when is nil' do
-      subject(:user) { build(:goal, ends_at: nil) }
+      subject(:goal) { build(:goal, ends_at: nil) }
 
       it { is_expected.to be_invalid }
     end
 
     context 'when is before starts_at' do
-      subject(:user) { build(:goal, ends_at: starts_at - 1.day) }
+      subject(:goal) { build(:goal, ends_at: starts_at - 1.day) }
 
       let(:starts_at) { Date.current.beginning_of_year }
 
@@ -185,11 +185,22 @@ RSpec.describe Goal, type: :model do
     end
 
     context 'when is equal starts_at' do
-      subject(:user) { build(:goal, ends_at: starts_at) }
+      subject(:goal) { build(:goal, ends_at: starts_at) }
 
       let(:starts_at) { Date.current.beginning_of_year }
 
       it { is_expected.to be_invalid }
+    end
+  end
+
+  describe '#created_at' do
+    context 'when is read-only' do
+      subject(:goal) { create(:goal) }
+
+      it do
+        expect { goal.update(created_at: Time.current) && goal.reload }
+          .not_to change(goal, :created_at)
+      end
     end
   end
 end

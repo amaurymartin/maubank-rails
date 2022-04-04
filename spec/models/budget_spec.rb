@@ -297,6 +297,16 @@ RSpec.describe Budget, type: :model do
       it { is_expected.to be_valid }
     end
 
+    context 'when is before starts_at' do
+      subject(:budget) do
+        build(:budget, starts_at: Date.current, ends_at: starts_at - 1.day)
+      end
+
+      let(:starts_at) { Date.current.beginning_of_month }
+
+      it { is_expected.to be_invalid }
+    end
+
     context 'when is not in the same month as starts_at - present' do
       subject(:budget) do
         build(:budget, starts_at: Date.current, ends_at: Date.current + 1.month)
@@ -313,6 +323,17 @@ RSpec.describe Budget, type: :model do
       end
 
       it { is_expected.to be_valid }
+    end
+  end
+
+  describe '#created_at' do
+    context 'when is read-only' do
+      subject(:budget) { create(:budget) }
+
+      it do
+        expect { budget.update(created_at: Time.current) && budget.reload }
+          .not_to change(budget, :created_at)
+      end
     end
   end
 

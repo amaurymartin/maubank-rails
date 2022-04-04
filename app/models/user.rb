@@ -7,7 +7,7 @@ class User < ApplicationRecord
     ENV.fetch('ONLY_BRAZILIAN_CPF', true)
   )
 
-  attr_readonly :key, :email
+  attr_readonly :key, :email, :created_at
 
   has_secure_password
 

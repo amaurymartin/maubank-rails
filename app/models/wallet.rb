@@ -3,7 +3,7 @@
 class Wallet < ApplicationRecord
   include Keyable
 
-  attr_readonly :user_id, :key
+  attr_readonly :user_id, :key, :created_at
 
   belongs_to :user
 
@@ -18,5 +18,9 @@ class Wallet < ApplicationRecord
 
   def to_param
     key
+  end
+
+  def update_balance(amount)
+    update(balance: balance + amount.to_f)
   end
 end
