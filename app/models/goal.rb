@@ -16,6 +16,10 @@ class Goal < ApplicationRecord
   validates :ends_at, presence: true
   validate :ends_at_must_be_after_starts_at
 
+  def to_param
+    key
+  end
+
   private
 
   def ends_at_must_be_after_starts_at
