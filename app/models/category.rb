@@ -19,6 +19,10 @@ class Category < ApplicationRecord
     key
   end
 
+  def current_budget
+    budget_for(Date.current)
+  end
+
   def budget_for(date)
     budgets.for(date).first
   end

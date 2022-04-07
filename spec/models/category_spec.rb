@@ -135,6 +135,46 @@ RSpec.describe Category, type: :model do
     end
   end
 
+  describe '#current_budget' do
+    subject(:current_budget) { category.current_budget }
+
+    let!(:category) { create(:category) }
+
+    context 'without any budget' do
+      it { is_expected.to be_nil }
+    end
+
+    context 'with a outdated budget' do
+      before do
+        travel_to(1.month.ago) { create(:budget, category:) }
+      end
+
+      it { is_expected.to be_nil }
+    end
+
+    context 'with current budget' do
+      let(:budget) do
+        build(:budget, category:, ends_at: Date.current + 1.month)
+      end
+
+      before do
+        travel_to(1.month.ago) { budget.save }
+      end
+
+      it { is_expected.to eq(budget) }
+    end
+
+    context 'with endless budget' do
+      let(:budget) { build(:budget, category:, ends_at: nil) }
+
+      before do
+        travel_to(1.month.ago) { budget.save }
+      end
+
+      it { is_expected.to eq(budget) }
+    end
+  end
+
   describe '#budget_for' do
     subject(:budget_for) { category.budget_for(date) }
 
@@ -150,6 +190,12 @@ RSpec.describe Category, type: :model do
           ends_at: Date.current + 1.month
         )
       )
+    end
+
+    context 'when date is nil' do
+      let(:date) { nil }
+
+      it { is_expected.to be_nil }
     end
 
     context 'without budgets for the date' do
