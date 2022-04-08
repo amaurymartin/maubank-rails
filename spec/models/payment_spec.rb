@@ -18,10 +18,20 @@ RSpec.describe Payment, type: :model do
   end
 
   describe '#category' do
-    context 'when is nil' do
-      subject(:payment) { build(:payment, :uncategorized) }
+    context "when does belongs to wallet's user" do
+      subject(:payment) { build(:payment) }
 
       it { is_expected.to be_valid }
+    end
+
+    context "when does not belongs to wallet's user" do
+      subject(:payment) do
+        build(:payment, wallet:, category: create(:category))
+      end
+
+      let(:wallet) { create(:wallet) }
+
+      it { is_expected.to be_invalid }
     end
   end
 

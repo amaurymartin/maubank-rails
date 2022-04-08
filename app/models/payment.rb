@@ -15,6 +15,7 @@ class Payment < ApplicationRecord
     other_than: 0.00,
     less_than: 1_000_000_000.00
   }
+  validate :category_and_wallet_must_belong_to_same_user
 
   before_save :update_wallet_balance, if: -> { new_record? || amount_changed? }
 
@@ -25,6 +26,12 @@ class Payment < ApplicationRecord
   end
 
   private
+
+  def category_and_wallet_must_belong_to_same_user
+    return if category.nil?
+
+    errors.add(:category, :invalid) unless category.user == wallet.user
+  end
 
   def update_wallet_balance
     wallet.update_balance(amount)
