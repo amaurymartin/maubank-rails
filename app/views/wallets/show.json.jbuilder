@@ -2,8 +2,9 @@
 
 json.wallet do
   json.partial! wallet, as: :wallet
-end
 
-json.links do
-  json.user user_path(wallet.user)
+  json.links do
+    json.self wallet_path(wallet)
+    json.payments wallet_payments_path(wallet)
+  end
 end

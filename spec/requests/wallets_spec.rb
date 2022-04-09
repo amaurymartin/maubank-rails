@@ -3,47 +3,62 @@
 require 'rails_helper'
 
 RSpec.describe 'Wallets', type: :request do
-  let(:user) { create(:user) }
   let(:response_body) { JSON.parse(response.body).deep_symbolize_keys }
-  let(:wallet_show_json_keys) do
-    %i[user_key key description balance created_at updated_at]
-  end
-  let(:wallet_links_json_keys) { :user }
+  let(:current_user) { create(:user) }
+  let(:wallet_keys) { %i[key description balance created_at updated_at links] }
+  let(:links_keys) { %i[self payments] }
 
   describe 'POST /wallets' do
     def make_request
-      post_with_token_to(wallets_path, user, { wallet: wallet_create_params })
+      post_with_token_to(wallets_path, current_user, { wallet: wallet_params })
     end
 
-    context 'with valid params' do
-      let(:wallet_create_params) { attributes_for(:wallet) }
+    let(:wallet_params) { attributes_for(:wallet) }
 
+    context 'with valid params' do
       it :aggregate_failures do
         expect { make_request }.to change(Wallet, :count).by(1)
         expect(response).to have_http_status(:created)
-        expect(response_body[:wallet].keys).to match_array wallet_show_json_keys
-        expect(response_body[:links].keys).to match_array wallet_links_json_keys
-        expect(Wallet.last.user).to eq(user)
+        expect(response_body[:wallet].keys).to match_array(wallet_keys)
+        expect(response_body[:wallet][:links].keys).to match_array(links_keys)
+        expect(Wallet.last.user).to eq(current_user)
       end
     end
 
     context 'with invalid params' do
-      let(:wallet_create_params) { { foo: 'bar' } }
+      let(:wallet_params) { { foo: 'bar' } }
 
       it :aggregate_failures do
         expect { make_request }.not_to change(Wallet, :count)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response_body[:errors]).to be_present
+        expect(response_body[:errors]).not_to be_empty
+      end
+    end
+
+    context 'with unexpected error' do
+      before do
+        # rubocop:disable RSpec/AnyInstance
+        allow_any_instance_of(Wallet).to receive(:save).and_return(false)
+        # rubocop:enable RSpec/AnyInstance
+      end
+
+      it :aggregate_failures do
+        expect { make_request }.not_to change(Wallet, :count)
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
 
   describe 'GET /wallets' do
     def make_request
-      get_with_token_to(wallets_path, user)
+      get_with_token_to(wallets_path, current_user)
     end
 
-    context 'when user has no wallets' do
+    let(:wallet_keys) do
+      %i[key description balance created_at updated_at links]
+    end
+
+    context 'when current user has no wallets' do
       before { make_request }
 
       it :aggregate_failures do
@@ -52,51 +67,66 @@ RSpec.describe 'Wallets', type: :request do
       end
     end
 
-    context 'when user has at least one wallet' do
+    context 'when current user has at least one wallet' do
       before do
-        create_list(:wallet, 2, user:)
+        create_list(:wallet, 2, user: current_user)
         make_request
       end
 
       it :aggregate_failures do
         expect(response).to have_http_status(:ok)
-        expect(response_body[:wallets].first.keys)
-          .to match_array(wallet_show_json_keys)
-        expect(response_body[:wallets].first[:user_key]).to eq(user.key)
-        expect(response_body[:wallets].size).to eq(user.wallets.count)
+        expect(response_body[:wallets].first.keys).to match_array(wallet_keys)
+        expect(response_body[:wallets].size).to eq(current_user.wallets.count)
+      end
+    end
+
+    context 'when more than one user has wallets' do
+      before do
+        create(:wallet, user: current_user)
+        create(:wallet, user: create(:user))
+        make_request
+      end
+
+      it "must ignore other user's wallets", :aggregate_failures do
+        expect(response).to have_http_status(:ok)
+        expect(response_body[:wallets].first.keys).to match_array(wallet_keys)
+        expect(response_body[:wallets].size).to eq(current_user.wallets.count)
+        expect(Wallet.count).to eq(2)
       end
     end
   end
 
   describe 'PUT /wallets/:key' do
     def make_request
-      put_with_token_to wallet_path(wallet), user, { wallet: wallet_put_params }
+      put_with_token_to(
+        wallet_path(wallet), current_user, { wallet: wallet_params }
+      )
     end
 
-    let(:wallet) { create(:wallet, user:) }
-    let(:wallet_put_params) { attributes_for(:wallet, description: 'Updated') }
+    let(:wallet) { create(:wallet, user: current_user) }
+    let(:wallet_params) { attributes_for(:wallet) }
 
     context 'with both key and params valid' do
       it :aggregate_failures do
         expect { make_request and wallet.reload }.to change(wallet, :attributes)
         expect(response).to have_http_status(:ok)
-        expect(response_body[:wallet].keys).to match_array wallet_show_json_keys
-        expect(response_body[:links].keys).to match_array wallet_links_json_keys
+        expect(response_body[:wallet].keys).to match_array(wallet_keys)
+        expect(response_body[:wallet][:links].keys).to match_array(links_keys)
       end
     end
 
     context 'with valid key and invalid params' do
-      let(:wallet_put_params) { attributes_for(:wallet, description: nil) }
+      let(:wallet_params) { attributes_for(:wallet, description: nil) }
 
       it :aggregate_failures do
         expect { make_request and wallet.reload }
           .not_to change(wallet, :attributes)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response_body[:errors]).to be_present
+        expect(response_body[:errors]).not_to be_empty
       end
     end
 
-    context 'with another users key' do
+    context 'when wallet does not belongs to current user' do
       let(:wallet) { create(:wallet) }
 
       it :aggregate_failures do
@@ -107,7 +137,7 @@ RSpec.describe 'Wallets', type: :request do
       end
     end
 
-    context 'with invalid key' do
+    context 'when key is invalid' do
       let(:wallet) { 'invalid' }
 
       before { make_request }
@@ -115,6 +145,20 @@ RSpec.describe 'Wallets', type: :request do
       it :aggregate_failures do
         expect(response).to have_http_status(:not_found)
         expect(response.body).to be_empty
+      end
+    end
+
+    context 'with unexpected error' do
+      before do
+        # rubocop:disable RSpec/AnyInstance
+        allow_any_instance_of(Wallet).to receive(:update).and_return(false)
+        # rubocop:enable RSpec/AnyInstance
+      end
+
+      it :aggregate_failures do
+        expect { make_request and wallet.reload }
+          .not_to change(wallet, :attributes)
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
@@ -122,36 +166,34 @@ RSpec.describe 'Wallets', type: :request do
   describe 'PATCH /wallets/:key' do
     def make_request
       patch_with_token_to(
-        wallet_path(wallet), user, { wallet: wallet_patch_params }
+        wallet_path(wallet), current_user, { wallet: wallet_params }
       )
     end
 
-    let(:wallet) { create(:wallet, user:) }
-    let(:wallet_patch_params) do
-      attributes_for(:wallet, description: 'Patched')
-    end
+    let(:wallet) { create(:wallet, user: current_user) }
+    let(:wallet_params) { { description: 'Patched' } }
 
     context 'with both key and params valid' do
       it :aggregate_failures do
         expect { make_request and wallet.reload }.to change(wallet, :attributes)
         expect(response).to have_http_status(:ok)
-        expect(response_body[:wallet].keys).to match_array wallet_show_json_keys
-        expect(response_body[:links].keys).to match_array wallet_links_json_keys
+        expect(response_body[:wallet].keys).to match_array(wallet_keys)
+        expect(response_body[:wallet][:links].keys).to match_array(links_keys)
       end
     end
 
     context 'with valid key and invalid params' do
-      let(:wallet_patch_params) { attributes_for(:wallet, description: nil) }
+      let(:wallet_params) { { description: nil } }
 
       it :aggregate_failures do
         expect { make_request and wallet.reload }
           .not_to change(wallet, :attributes)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response_body[:errors]).to be_present
+        expect(response_body[:errors]).not_to be_empty
       end
     end
 
-    context 'with another users key' do
+    context 'when wallet does not belongs to current user' do
       let(:wallet) { create(:wallet) }
 
       it :aggregate_failures do
@@ -162,7 +204,7 @@ RSpec.describe 'Wallets', type: :request do
       end
     end
 
-    context 'with invalid key' do
+    context 'when key is invalid' do
       let(:wallet) { 'invalid' }
 
       before { make_request }
@@ -172,16 +214,30 @@ RSpec.describe 'Wallets', type: :request do
         expect(response.body).to be_empty
       end
     end
+
+    context 'with unexpected error' do
+      before do
+        # rubocop:disable RSpec/AnyInstance
+        allow_any_instance_of(Wallet).to receive(:update).and_return(false)
+        # rubocop:enable RSpec/AnyInstance
+      end
+
+      it :aggregate_failures do
+        expect { make_request and wallet.reload }
+          .not_to change(wallet, :attributes)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
   end
 
   describe 'DELETE /wallets/:key' do
     def make_request
-      delete_with_token_to(wallet_path(wallet), user)
+      delete_with_token_to(wallet_path(wallet), current_user)
     end
 
-    let!(:wallet) { create(:wallet, user:) }
+    let!(:wallet) { create(:wallet, user: current_user) }
 
-    context 'with valid key' do
+    context 'when wallet belongs to current user' do
       it :aggregate_failures do
         expect { make_request }.to change(Wallet, :count).by(-1)
         expect(response).to have_http_status(:no_content)
@@ -189,9 +245,28 @@ RSpec.describe 'Wallets', type: :request do
       end
     end
 
-    context 'with errors' do
-      let(:wallet_instance) { instance_double(Wallet) }
+    context 'when wallet does not belongs to current user' do
+      let(:wallet) { create(:wallet) }
 
+      before { make_request }
+
+      it :aggregate_failures do
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'when key is invalid' do
+      let(:wallet) { 'invalid' }
+
+      it :aggregate_failures do
+        expect { make_request }.not_to change(Wallet, :count)
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to be_empty
+      end
+    end
+
+    context 'with unexpected error' do
       before do
         # rubocop:disable RSpec/AnyInstance
         allow_any_instance_of(Wallet).to receive(:destroy).and_return(false)
@@ -201,27 +276,6 @@ RSpec.describe 'Wallets', type: :request do
       it :aggregate_failures do
         expect { make_request }.not_to change(Wallet, :count)
         expect(response).to have_http_status(:unprocessable_entity)
-      end
-    end
-
-    context 'with another users key' do
-      let(:wallet) { create(:wallet) }
-
-      before { make_request }
-
-      it :aggregate_failures do
-        expect(response).to have_http_status(:not_found)
-        expect(response.body).to be_empty
-      end
-    end
-
-    context 'with invalid key' do
-      let(:wallet) { 'invalid' }
-
-      it :aggregate_failures do
-        expect { make_request }.not_to change(Wallet, :count)
-        expect(response).to have_http_status(:not_found)
-        expect(response.body).to be_empty
       end
     end
   end
