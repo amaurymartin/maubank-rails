@@ -2,8 +2,17 @@
 
 json.category do
   json.partial! category, as: :category
-end
 
-json.links do
-  json.user user_path(category.user)
+  if category.current_budget.present?
+    json.budget do
+      json.extract! category.current_budget, :key, :amount, :starts_at, :ends_at
+    end
+  end
+
+  json.links do
+    json.self category_path(category)
+    if category.current_budget.present?
+      json.budget budget_path(category.current_budget)
+    end
+  end
 end
