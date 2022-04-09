@@ -28,22 +28,19 @@ module Wallets
     end
 
     def set_category
-      return unless create_params[:category] && create_params[:category][:key]
+      return unless category_params && category_params[:key]
 
-      @category = current_user.categories.find_by!(
-        key: create_params[:category][:key]
-      )
+      @category = current_user.categories.find_by!(key: category_params[:key])
     end
 
-    def create_params
-      params.require(:payment)
-            .permit(:effective_date, :amount, category: [:key])
+    def category_params
+      params.require(:payment).permit(category: [:key])[:category]
     end
 
     def payment_params
-      return create_params.merge(category: @category) if @category.present?
-
-      create_params.reject { |k| k == 'category' }
+      params.require(:payment)
+            .permit(:effective_date, :amount)
+            .merge(category: @category)
     end
   end
 end

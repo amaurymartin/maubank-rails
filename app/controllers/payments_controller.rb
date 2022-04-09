@@ -15,7 +15,7 @@ class PaymentsController < ApplicationController
   end
 
   def update
-    @payment.category = @new_category if @payment.category != @new_category
+    @payment.category = @new_category unless @new_category == @payment.category
 
     if @payment.update(payment_params)
       render :show, locals: { payment: @payment }, status: :ok
@@ -39,18 +39,18 @@ class PaymentsController < ApplicationController
   end
 
   def set_new_category
-    return unless update_params[:category] && update_params[:category][:key]
+    return unless category_params && category_params[:key]
 
-    @new_category = current_user.categories.find_by!(
-      key: update_params[:category][:key]
-    )
+    @new_category = current_user.categories.find_by!(key: category_params[:key])
   end
 
-  def update_params
-    params.require(:payment).permit(:effective_date, :amount, category: [:key])
+  def category_params
+    params.require(:payment).permit(category: [:key])[:category]
   end
 
   def payment_params
-    update_params.reject { |k| k == 'category' }
+    params.require(:payment)
+          .permit(:effective_date, :amount)
+          .merge(category: @new_category)
   end
 end

@@ -19,7 +19,7 @@ RSpec.describe Payment, type: :model do
 
   describe '#category' do
     context "when does belongs to wallet's user" do
-      subject(:payment) { build(:payment) }
+      subject(:payment) { build(:payment, :categorized) }
 
       it { is_expected.to be_valid }
     end
