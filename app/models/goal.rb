@@ -13,18 +13,10 @@ class Goal < ApplicationRecord
   validates :amount,
             numericality: { greater_than: 0.00, less_than: 1_000_000_000.00 }
   validates :starts_at, presence: true
-  validates :ends_at, presence: true
-  validate :ends_at_must_be_after_starts_at
+  validates :ends_at, comparison: { greater_than: :starts_at },
+                      unless: -> { starts_at.nil? }
 
   def to_param
     key
-  end
-
-  private
-
-  def ends_at_must_be_after_starts_at
-    return if starts_at.nil? || ends_at.nil? || ends_at > starts_at
-
-    errors.add(:ends_at, :invalid)
   end
 end
