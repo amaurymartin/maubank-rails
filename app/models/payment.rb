@@ -8,6 +8,8 @@ class Payment < ApplicationRecord
   belongs_to :category, optional: true
   belongs_to :wallet
 
+  delegate :user, to: :wallet
+
   validates :key, presence: true, uniqueness: true
   validates :effective_date, presence: true
   validates :amount, numericality: {
@@ -18,8 +20,6 @@ class Payment < ApplicationRecord
   validate :category_and_wallet_must_belong_to_same_user
 
   before_save :update_wallet_balance, if: -> { new_record? || amount_changed? }
-
-  delegate :user, to: :wallet
 
   def to_param
     key
