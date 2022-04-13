@@ -21,7 +21,10 @@ RSpec.describe Budget, type: :model do
     context 'when is nil' do
       subject(:budget) { build(:budget, category: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(budget).to be_invalid
+        expect(budget.errors).to be_added(:category, :blank)
+      end
     end
 
     context 'when is read-only' do
@@ -40,7 +43,7 @@ RSpec.describe Budget, type: :model do
     context 'when is nil' do
       subject(:budget) { build(:budget, key: nil) }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(budget).to be_valid
         expect(budget.key).to be_present
       end
@@ -49,7 +52,7 @@ RSpec.describe Budget, type: :model do
     context 'when is blank' do
       subject(:budget) { build(:budget, key: '') }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(budget).to be_valid
         expect(budget.key).to be_present
       end
@@ -60,7 +63,7 @@ RSpec.describe Budget, type: :model do
 
       let(:invalid_key) { 'invalid_key' }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(budget).to be_valid
         expect(budget.key).not_to eq(invalid_key)
       end
@@ -71,7 +74,11 @@ RSpec.describe Budget, type: :model do
 
       let(:first_budget) { create(:budget) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_budget).to be_invalid
+        expect(second_budget.errors)
+          .to be_added(:key, :taken, { value: first_budget.key })
+      end
     end
 
     context 'when is read-only' do
@@ -88,19 +95,34 @@ RSpec.describe Budget, type: :model do
     context 'when is nil' do
       subject(:budget) { build(:budget, amount: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(budget).to be_invalid
+        expect(budget.errors).to be_added(:amount, :not_a_number, value: nil)
+      end
     end
 
     context 'when is negative' do
-      subject(:budget) { build(:budget, amount: -0.01) }
+      subject(:budget) { build(:budget, amount: negative_amount) }
 
-      it { is_expected.to be_invalid }
+      let(:negative_amount) { -0.01 }
+
+      it 'must be greater than zero', :aggregate_failures do
+        expect(budget).to be_invalid
+        expect(budget.errors).to be_added(
+          :amount, :greater_than, { value: negative_amount, count: 0.00 }
+        )
+      end
     end
 
     context 'when is equal to zero' do
       subject(:budget) { build(:budget, amount: 0.00) }
 
-      it { is_expected.to be_invalid }
+      it 'must be greater than zero', :aggregate_failures do
+        expect(budget).to be_invalid
+        expect(budget.errors).to be_added(
+          :amount, :greater_than, { value: 0.00, count: 0.0 }
+        )
+      end
     end
 
     context 'when is equal to 999_999_999.99' do
@@ -110,9 +132,16 @@ RSpec.describe Budget, type: :model do
     end
 
     context 'when is greater than 999_999_999.99' do
-      subject(:budget) { build(:budget, amount: 1_000_000_000.00) }
+      subject(:budget) { build(:budget, amount:) }
 
-      it { is_expected.to be_invalid }
+      let(:amount) { 1_000_000_000.00 }
+
+      it 'must be less than 1_000_000_000.00', :aggregate_failures do
+        expect(budget).to be_invalid
+        expect(budget.errors).to be_added(
+          :amount, :less_than, { value: amount, count: 1_000_000_000.00 }
+        )
+      end
     end
   end
 
@@ -120,7 +149,10 @@ RSpec.describe Budget, type: :model do
     context 'when is nil' do
       subject(:budget) { build(:budget, starts_at: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(budget).to be_invalid
+        expect(budget.errors).to be_added(:starts_at, :blank)
+      end
     end
 
     context 'when already taken by same category' do
@@ -132,7 +164,11 @@ RSpec.describe Budget, type: :model do
 
       let(:first_budget) { create(:budget) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_budget).to be_invalid
+        expect(second_budget.errors)
+          .to be_added(:starts_at, :taken, { value: first_budget.starts_at })
+      end
     end
 
     context 'when already taken by other category' do
@@ -157,9 +193,19 @@ RSpec.describe Budget, type: :model do
     end
 
     context 'when is in the past' do
-      subject(:budget) { build(:budget, starts_at: Date.current - 1.month) }
+      subject(:budget) { build(:budget, starts_at:) }
 
-      it { is_expected.to be_invalid }
+      let(:starts_at) { Date.current - 1.month }
+
+      it :aggregate_failures do
+        expect(budget).to be_invalid
+        expect(budget.errors).to be_added(
+          :starts_at, :greater_than_or_equal_to, {
+            value: starts_at.beginning_of_month,
+            count: Date.current.beginning_of_month
+          }
+        )
+      end
     end
 
     context 'when is in current month' do
@@ -243,7 +289,11 @@ RSpec.describe Budget, type: :model do
 
       let(:first_budget) { create(:budget, starts_at: Date.current + 1.month) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_budget).to be_invalid
+        expect(second_budget.errors)
+          .to be_added(:ends_at, :taken, { value: first_budget.ends_at })
+      end
     end
 
     context 'when date is already taken by other category' do
@@ -270,13 +320,18 @@ RSpec.describe Budget, type: :model do
     end
 
     context 'when is in the past' do
-      subject(:budget) do
-        build(:budget,
-              starts_at: Date.current - 1.month,
-              ends_at: Date.current - 1.month)
-      end
+      subject(:budget) { build(:budget, starts_at:, ends_at:) }
 
-      it { is_expected.to be_invalid }
+      let(:starts_at) { Date.current }
+      let(:ends_at) { Date.current - 1.month }
+
+      it :aggregate_failures do
+        expect(budget).to be_invalid
+        expect(budget.errors).to be_added(
+          :ends_at, :greater_than_or_equal_to,
+          { value: ends_at.end_of_month, count: starts_at.beginning_of_month }
+        )
+      end
     end
 
     context 'when is in current month' do
@@ -298,13 +353,18 @@ RSpec.describe Budget, type: :model do
     end
 
     context 'when is before starts_at' do
-      subject(:budget) do
-        build(:budget, starts_at: Date.current, ends_at: starts_at - 1.day)
+      subject(:budget) { build(:budget, starts_at:, ends_at:) }
+
+      let(:starts_at) { Date.current + 1.month }
+      let(:ends_at) { Date.current }
+
+      it :aggregate_failures do
+        expect(budget).to be_invalid
+        expect(budget.errors).to be_added(
+          :ends_at, :greater_than_or_equal_to,
+          { value: ends_at.end_of_month, count: starts_at.beginning_of_month }
+        )
       end
-
-      let(:starts_at) { Date.current.beginning_of_month }
-
-      it { is_expected.to be_invalid }
     end
 
     context 'when is not in the same month as starts_at - present' do

@@ -71,7 +71,10 @@ RSpec.describe User, type: :model do
     context 'when is blank' do
       subject(:user) { build(:user, full_name: '') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:full_name, :blank)
+      end
     end
   end
 
@@ -79,13 +82,19 @@ RSpec.describe User, type: :model do
     context 'when is nil' do
       subject(:user) { build(:user, nickname: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:nickname, :blank)
+      end
     end
 
     context 'when is blank' do
       subject(:user) { build(:user, nickname: '') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:nickname, :blank)
+      end
     end
   end
 
@@ -99,7 +108,10 @@ RSpec.describe User, type: :model do
     context 'when is blank' do
       subject(:user) { build(:user, username: '') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:username, :blank)
+      end
     end
 
     context 'when nil was already taken' do
@@ -141,19 +153,32 @@ RSpec.describe User, type: :model do
     context 'when is nil' do
       subject(:user) { build(:user, email: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:email, :blank)
+      end
     end
 
     context 'when is blank' do
       subject(:user) { build(:user, email: '') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:email, :blank)
+      end
     end
 
     context 'when is invalid' do
-      subject(:user) { build(:user, email: 'not_a_valid_email') }
+      subject(:user) { build(:user, email: invalid_email) }
 
-      it { is_expected.to be_invalid }
+      let(:invalid_email) { 'not_a_valid_email' }
+
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(
+          :email, :invalid_email, { value: invalid_email }
+        )
+      end
     end
 
     context 'when already taken' do
@@ -161,7 +186,11 @@ RSpec.describe User, type: :model do
 
       let(:first_user) { create(:user) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_user).to be_invalid
+        expect(second_user.errors)
+          .to be_added(:email, :taken, { value: first_user.email })
+      end
     end
 
     context 'when already taken case insensitive' do
@@ -192,19 +221,28 @@ RSpec.describe User, type: :model do
     context 'when is nil' do
       subject(:user) { build(:user, password: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:password, :blank)
+      end
     end
 
     context 'when is blank' do
       subject(:user) { build(:user, password: '') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:password, :blank)
+      end
     end
 
     context 'when has less than 8 characters' do
       subject(:user) { build(:user, password: 'short') }
 
-      it { is_expected.to be_invalid }
+      it 'must has at least 8 characters', :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:password, :too_short, { count: 8 })
+      end
     end
   end
 
@@ -212,19 +250,51 @@ RSpec.describe User, type: :model do
     context 'when is nil' do
       subject(:user) { build(:user, password_confirmation: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:password_confirmation, :blank)
+      end
     end
 
     context 'when is blank' do
       subject(:user) { build(:user, password_confirmation: '') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:password_confirmation, :blank)
+      end
     end
 
     context 'when is not equal to password' do
       subject(:user) { build(:user, password_confirmation: 'different') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(
+          :password_confirmation, :confirmation, { attribute: 'Password' }
+        )
+      end
+    end
+
+    context 'when password is not being updated' do
+      subject(:user) { create(:user) }
+
+      before { user.full_name = Faker::Name.name }
+
+      it { expect { user.save }.to change(user, :attributes) }
+    end
+
+    context 'when password is being updated' do
+      subject(:user) { create(:user) }
+
+      before { user.password = Faker::Internet.password(min_length: 8) }
+
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(
+          :password_confirmation, :confirmation, { attribute: 'Password' }
+        )
+      end
     end
   end
 
@@ -238,13 +308,19 @@ RSpec.describe User, type: :model do
     context 'when is blank' do
       subject(:user) { build(:user, documentation: '') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:documentation, :invalid)
+      end
     end
 
     context 'when is not a brazilian CPF' do
       subject(:user) { build(:user, documentation: 'invalid') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:documentation, :invalid)
+      end
     end
 
     context 'when is not a brazilian CPF but allows other values' do
@@ -270,7 +346,12 @@ RSpec.describe User, type: :model do
 
       let(:first_user) { create(:user) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_user).to be_invalid
+        expect(second_user.errors).to be_added(
+          :documentation, :taken, { value: first_user.documentation }
+        )
+      end
     end
 
     context 'when is formatted' do
@@ -301,9 +382,17 @@ RSpec.describe User, type: :model do
     end
 
     context 'when is in the future' do
-      subject(:user) { build(:user, born_on: 1.day.from_now) }
+      subject(:user) { build(:user, born_on: date_in_future) }
 
-      it { is_expected.to be_invalid }
+      let(:date_in_future) { Date.current + 1.day }
+
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(
+          :born_on, :less_than_or_equal_to,
+          { value: date_in_future, count: Date.current }
+        )
+      end
     end
 
     context 'when is today' do
@@ -323,7 +412,10 @@ RSpec.describe User, type: :model do
     context 'when is set at creation' do
       subject(:user) { build(:user, confirmed_at: Time.current) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(user).to be_invalid
+        expect(user.errors).to be_added(:confirmed_at, :present)
+      end
     end
   end
 

@@ -13,7 +13,10 @@ RSpec.describe Goal, type: :model do
     context 'when is nil' do
       subject(:goal) { build(:goal, user: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(:user, :blank)
+      end
     end
 
     context 'when is read-only' do
@@ -32,7 +35,7 @@ RSpec.describe Goal, type: :model do
     context 'when is nil' do
       subject(:goal) { build(:goal, key: nil) }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(goal).to be_valid
         expect(goal.key).to be_present
       end
@@ -41,7 +44,7 @@ RSpec.describe Goal, type: :model do
     context 'when is blank' do
       subject(:goal) { build(:goal, key: '') }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(goal).to be_valid
         expect(goal.key).to be_present
       end
@@ -52,7 +55,7 @@ RSpec.describe Goal, type: :model do
 
       let(:invalid_key) { 'invalid_key' }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(goal).to be_valid
         expect(goal.key).not_to eq(invalid_key)
       end
@@ -63,7 +66,11 @@ RSpec.describe Goal, type: :model do
 
       let(:first_goal) { create(:goal) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_goal).to be_invalid
+        expect(second_goal.errors)
+          .to be_added(:key, :taken, { value: first_goal.key })
+      end
     end
 
     context 'when is read-only' do
@@ -80,13 +87,19 @@ RSpec.describe Goal, type: :model do
     context 'when is nil' do
       subject(:goal) { build(:goal, description: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(:description, :blank)
+      end
     end
 
     context 'when is blank' do
       subject(:goal) { build(:goal, description: '') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(:description, :blank)
+      end
     end
 
     context 'when already taken by same user' do
@@ -98,7 +111,11 @@ RSpec.describe Goal, type: :model do
 
       let(:first_goal) { create(:goal) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_goal).to be_invalid
+        expect(second_goal.errors)
+          .to be_added(:description, :taken, { value: first_goal.description })
+      end
     end
 
     context 'when already taken by same user case insensitive' do
@@ -133,19 +150,34 @@ RSpec.describe Goal, type: :model do
     context 'when is nil' do
       subject(:goal) { build(:goal, amount: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(:amount, :not_a_number, value: nil)
+      end
     end
 
     context 'when is negative' do
-      subject(:goal) { build(:goal, amount: -0.01) }
+      subject(:goal) { build(:goal, amount: negative_amount) }
 
-      it { is_expected.to be_invalid }
+      let(:negative_amount) { -0.01 }
+
+      it 'must be greater than zero', :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(
+          :amount, :greater_than, { value: negative_amount, count: 0.00 }
+        )
+      end
     end
 
     context 'when is equal to zero' do
       subject(:goal) { build(:goal, amount: 0.00) }
 
-      it { is_expected.to be_invalid }
+      it 'must be greater than zero', :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(
+          :amount, :greater_than, { value: 0.00, count: 0.0 }
+        )
+      end
     end
 
     context 'when is equal to 999_999_999.99' do
@@ -155,9 +187,16 @@ RSpec.describe Goal, type: :model do
     end
 
     context 'when is greater than 999_999_999.99' do
-      subject(:goal) { build(:goal, amount: 1_000_000_000.00) }
+      subject(:goal) { build(:goal, amount:) }
 
-      it { is_expected.to be_invalid }
+      let(:amount) { 1_000_000_000.00 }
+
+      it 'must be less than 1_000_000_000.00', :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(
+          :amount, :less_than, { value: amount, count: 1_000_000_000.00 }
+        )
+      end
     end
   end
 
@@ -165,7 +204,10 @@ RSpec.describe Goal, type: :model do
     context 'when is nil' do
       subject(:goal) { build(:goal, starts_at: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(:starts_at, :blank)
+      end
     end
   end
 
@@ -173,15 +215,37 @@ RSpec.describe Goal, type: :model do
     context 'when is nil' do
       subject(:goal) { build(:goal, ends_at: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(
+          :ends_at, :blank, { value: nil, count: goal.starts_at }
+        )
+      end
+    end
+
+    context 'when starts_at is nil' do
+      subject(:goal) { build(:goal, starts_at: nil, ends_at: Date.current) }
+
+      it :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(:starts_at, :blank)
+        expect(goal.errors).not_to be_added(:ends_at)
+      end
     end
 
     context 'when is before starts_at' do
-      subject(:goal) { build(:goal, ends_at: starts_at - 1.day) }
+      subject(:goal) do
+        build(:goal, starts_at: Date.current.beginning_of_year, ends_at:)
+      end
 
-      let(:starts_at) { Date.current.beginning_of_year }
+      let(:ends_at) { Date.current.beginning_of_year - 1.day }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(
+          :ends_at, :greater_than, { value: ends_at, count: goal.starts_at }
+        )
+      end
     end
 
     context 'when is equal starts_at' do
@@ -189,7 +253,12 @@ RSpec.describe Goal, type: :model do
 
       let(:starts_at) { Date.current.beginning_of_year }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(goal).to be_invalid
+        expect(goal.errors).to be_added(
+          :ends_at, :greater_than, { value: starts_at, count: goal.starts_at }
+        )
+      end
     end
   end
 
@@ -202,5 +271,11 @@ RSpec.describe Goal, type: :model do
           .not_to change(goal, :created_at)
       end
     end
+  end
+
+  describe '#to_param' do
+    let(:goal) { create(:goal) }
+
+    it { expect(goal.to_param).to eq(goal.key) }
   end
 end

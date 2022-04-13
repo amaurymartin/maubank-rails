@@ -13,7 +13,10 @@ RSpec.describe AccessToken, type: :model do
     context 'when is nil' do
       subject(:access_token) { build(:access_token, user: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(access_token).to be_invalid
+        expect(access_token.errors).to be_added(:user, :blank)
+      end
     end
 
     context 'when is read-only' do
@@ -102,11 +105,13 @@ RSpec.describe AccessToken, type: :model do
     context 'when is read-only' do
       subject(:access_token) { create(:access_token) }
 
-      let(:encrypted_token) { Digest::SHA256.hexdigest(SecureRandom.base58) }
+      let(:new_encrypted_token) do
+        Digest::SHA256.hexdigest(SecureRandom.base58)
+      end
 
       it do
         expect do
-          access_token.update(token: encrypted_token) && access_token.reload
+          access_token.update(token: new_encrypted_token) && access_token.reload
         end.not_to change(access_token, :token)
       end
     end
@@ -122,7 +127,10 @@ RSpec.describe AccessToken, type: :model do
     context 'when is set at creation' do
       subject(:access_token) { build(:access_token, revoked_at: Time.current) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(access_token).to be_invalid
+        expect(access_token.errors).to be_added(:revoked_at, :present)
+      end
     end
   end
 

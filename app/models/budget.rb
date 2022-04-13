@@ -7,8 +7,7 @@ class Budget < ApplicationRecord
 
   belongs_to :category
 
-  before_validation :set_starts_at_to_beginning_of_month
-  before_validation :set_ends_at_to_end_of_month
+  delegate :user, to: :category
 
   validates :key, presence: true, uniqueness: true
   validates :amount,
@@ -16,13 +15,23 @@ class Budget < ApplicationRecord
   validates :starts_at, presence: true, uniqueness: { scope: :category }
   validates :ends_at, uniqueness: { scope: :category }, allow_nil: true
 
-  validate :starts_at_cannot_be_in_the_past, unless: -> { starts_at.nil? }
-  validate :ends_at_must_be_end_of_current_month_or_after
-  validate :ends_at_must_be_after_starts_at
+  with_options unless: -> { starts_at.nil? } do
+    before_validation :set_starts_at_to_beginning_of_month
+    validates :starts_at, comparison: {
+      greater_than_or_equal_to: Date.current.beginning_of_month
+    }
+    validates :ends_at, comparison: { greater_than_or_equal_to: :starts_at },
+                        unless: -> { ends_at.nil? }
+  end
+
+  with_options unless: -> { ends_at.nil? } do
+    before_validation :set_ends_at_to_end_of_month
+    validates :ends_at, comparison: {
+      greater_than_or_equal_to: Date.current.end_of_month
+    }, unless: -> { starts_at.nil? || :starts_at > :ends_at }
+  end
 
   before_save :update_endless_budgets, if: -> { ends_at.nil? }
-
-  delegate :user, to: :category
 
   scope :endless_for, lambda { |category|
     where(category:).where(ends_at: nil).order(starts_at: :asc)
@@ -42,33 +51,11 @@ class Budget < ApplicationRecord
   private
 
   def set_starts_at_to_beginning_of_month
-    return if starts_at.nil?
-
     self.starts_at = starts_at.beginning_of_month
   end
 
   def set_ends_at_to_end_of_month
-    return if ends_at.nil?
-
     self.ends_at = ends_at.end_of_month
-  end
-
-  def starts_at_cannot_be_in_the_past
-    return if starts_at >= Date.current.beginning_of_month
-
-    errors.add(:starts_at, :invalid)
-  end
-
-  def ends_at_must_be_end_of_current_month_or_after
-    return if ends_at.nil? || ends_at >= Date.current.end_of_month
-
-    errors.add(:ends_at, :invalid)
-  end
-
-  def ends_at_must_be_after_starts_at
-    return if starts_at.nil? || ends_at.nil?
-
-    errors.add(:ends_at, :invalid) unless ends_at > starts_at
   end
 
   def update_endless_budgets
