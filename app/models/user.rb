@@ -30,7 +30,8 @@ class User < ApplicationRecord
             allow_nil: true
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates_email_format_of :email, disposable: true
-  validate :cannot_born_in_the_future
+  validates :born_on,
+            comparison: { less_than_or_equal_to: Date.current }, allow_nil: true
   validates :confirmed_at, absence: true, on: :create
 
   with_options if: -> { new_record? || password.present? } do
@@ -57,12 +58,6 @@ class User < ApplicationRecord
   end
 
   private
-
-  def cannot_born_in_the_future
-    return if born_on.nil? || Date.current >= born_on
-
-    errors.add(:born_on, :invalid)
-  end
 
   def strip_documentation
     self.documentation = CPF.new(documentation).stripped
