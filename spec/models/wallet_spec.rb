@@ -13,7 +13,10 @@ RSpec.describe Wallet, type: :model do
     context 'when is nil' do
       subject(:wallet) { build(:wallet, user: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(wallet).to be_invalid
+        expect(wallet.errors).to be_added(:user, :blank)
+      end
     end
 
     context 'when is read-only' do
@@ -32,7 +35,7 @@ RSpec.describe Wallet, type: :model do
     context 'when is nil' do
       subject(:wallet) { build(:wallet, key: nil) }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(wallet).to be_valid
         expect(wallet.key).to be_present
       end
@@ -41,7 +44,7 @@ RSpec.describe Wallet, type: :model do
     context 'when is blank' do
       subject(:wallet) { build(:wallet, key: '') }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(wallet).to be_valid
         expect(wallet.key).to be_present
       end
@@ -52,7 +55,7 @@ RSpec.describe Wallet, type: :model do
 
       let(:invalid_key) { 'invalid_key' }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(wallet).to be_valid
         expect(wallet.key).not_to eq(invalid_key)
       end
@@ -63,7 +66,11 @@ RSpec.describe Wallet, type: :model do
 
       let(:first_wallet) { create(:wallet) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_wallet).to be_invalid
+        expect(second_wallet.errors)
+          .to be_added(:key, :taken, { value: first_wallet.key })
+      end
     end
 
     context 'when is read-only' do
@@ -80,13 +87,19 @@ RSpec.describe Wallet, type: :model do
     context 'when is nil' do
       subject(:wallet) { build(:wallet, description: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(wallet).to be_invalid
+        expect(wallet.errors).to be_added(:description, :blank)
+      end
     end
 
     context 'when is blank' do
       subject(:wallet) { build(:wallet, description: '') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(wallet).to be_invalid
+        expect(wallet.errors).to be_added(:description, :blank)
+      end
     end
 
     context 'when already taken by same user' do
@@ -138,13 +151,23 @@ RSpec.describe Wallet, type: :model do
     context 'when is nil' do
       subject(:wallet) { build(:wallet, balance: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(wallet).to be_invalid
+        expect(wallet.errors).to be_added(:balance, :not_a_number, value: nil)
+      end
     end
 
     context 'when is less than -999_999_999.99' do
-      subject(:wallet) { build(:wallet, balance: -1_000_000_000.00) }
+      subject(:wallet) { build(:wallet, balance:) }
 
-      it { is_expected.to be_invalid }
+      let(:balance) { -1_000_000_000.00 }
+
+      it 'must be greater than -1_000_000_000.00', :aggregate_failures do
+        expect(wallet).to be_invalid
+        expect(wallet.errors).to be_added(
+          :balance, :greater_than, { value: balance, count: -1_000_000_000.00 }
+        )
+      end
     end
 
     context 'when is equal to -999_999_999.99' do
@@ -166,9 +189,16 @@ RSpec.describe Wallet, type: :model do
     end
 
     context 'when is greater than 999_999_999.99' do
-      subject(:wallet) { build(:wallet, balance: 1_000_000_000.00) }
+      subject(:wallet) { build(:wallet, balance:) }
 
-      it { is_expected.to be_invalid }
+      let(:balance) { 1_000_000_000.00 }
+
+      it 'must be less than 1_000_000_000.00', :aggregate_failures do
+        expect(wallet).to be_invalid
+        expect(wallet.errors).to be_added(
+          :balance, :less_than, { value: balance, count: 1_000_000_000.00 }
+        )
+      end
     end
   end
 
@@ -181,6 +211,12 @@ RSpec.describe Wallet, type: :model do
           .not_to change(wallet, :created_at)
       end
     end
+  end
+
+  describe '#to_param' do
+    let(:wallet) { create(:wallet) }
+
+    it { expect(wallet.to_param).to eq(wallet.key) }
   end
 
   describe '#update_balance' do
