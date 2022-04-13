@@ -13,7 +13,10 @@ RSpec.describe Category, type: :model do
     context 'when is nil' do
       subject(:category) { build(:category, user: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(category).to be_invalid
+        expect(category.errors).to be_added(:user, :blank)
+      end
     end
 
     context 'when is read-only' do
@@ -32,7 +35,7 @@ RSpec.describe Category, type: :model do
     context 'when is nil' do
       subject(:category) { build(:category, key: nil) }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(category).to be_valid
         expect(category.key).to be_present
       end
@@ -41,7 +44,7 @@ RSpec.describe Category, type: :model do
     context 'when is blank' do
       subject(:category) { build(:category, key: '') }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(category).to be_valid
         expect(category.key).to be_present
       end
@@ -52,7 +55,7 @@ RSpec.describe Category, type: :model do
 
       let(:invalid_key) { 'invalid_key' }
 
-      it :aggregate_failures do
+      it 'must auto generate', :aggregate_failures do
         expect(category).to be_valid
         expect(category.key).not_to eq(invalid_key)
       end
@@ -63,7 +66,11 @@ RSpec.describe Category, type: :model do
 
       let(:first_category) { create(:category) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_category).to be_invalid
+        expect(second_category.errors)
+          .to be_added(:key, :taken, { value: first_category.key })
+      end
     end
 
     context 'when is read-only' do
@@ -80,13 +87,19 @@ RSpec.describe Category, type: :model do
     context 'when is nil' do
       subject(:category) { build(:category, description: nil) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(category).to be_invalid
+        expect(category.errors).to be_added(:description, :blank)
+      end
     end
 
     context 'when is blank' do
       subject(:category) { build(:category, description: '') }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(category).to be_invalid
+        expect(category.errors).to be_added(:description, :blank)
+      end
     end
 
     context 'when already taken by same user' do
@@ -98,7 +111,13 @@ RSpec.describe Category, type: :model do
 
       let(:first_category) { create(:category) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_category).to be_invalid
+        expect(second_category.errors)
+          .to be_added(
+            :description, :taken, { value: first_category.description }
+          )
+      end
     end
 
     context 'when already taken by same user case insensitive' do
@@ -110,7 +129,13 @@ RSpec.describe Category, type: :model do
 
       let(:first_category) { create(:category) }
 
-      it { is_expected.to be_invalid }
+      it :aggregate_failures do
+        expect(second_category).to be_invalid
+        expect(second_category.errors)
+          .to be_added(
+            :description, :taken, { value: first_category.description.upcase }
+          )
+      end
     end
 
     context 'when already taken by other user' do
@@ -135,6 +160,12 @@ RSpec.describe Category, type: :model do
     end
   end
 
+  describe '#to_param' do
+    let(:category) { create(:category) }
+
+    it { expect(category.to_param).to eq(category.key) }
+  end
+
   describe '#current_budget' do
     subject(:current_budget) { category.current_budget }
 
@@ -144,12 +175,12 @@ RSpec.describe Category, type: :model do
       it { is_expected.to be_nil }
     end
 
-    context 'with a outdated budget' do
-      before do
-        travel_to(1.month.ago) { create(:budget, category:) }
-      end
+    context 'with an outdated budget' do
+      before { create(:budget, category:) }
 
-      it { is_expected.to be_nil }
+      it do
+        travel_to(1.month.from_now) { expect(current_budget).to be_nil }
+      end
     end
 
     context 'with current budget' do
@@ -157,21 +188,21 @@ RSpec.describe Category, type: :model do
         build(:budget, category:, ends_at: Date.current + 1.month)
       end
 
-      before do
-        travel_to(1.month.ago) { budget.save }
-      end
+      before { budget.save }
 
-      it { is_expected.to eq(budget) }
+      it do
+        travel_to(1.month.from_now) { expect(current_budget).to eq(budget) }
+      end
     end
 
     context 'with endless budget' do
       let(:budget) { build(:budget, category:, ends_at: nil) }
 
-      before do
-        travel_to(1.month.ago) { budget.save }
-      end
+      before { budget.save }
 
-      it { is_expected.to eq(budget) }
+      it do
+        travel_to(1.month.from_now) { expect(current_budget).to eq(budget) }
+      end
     end
   end
 
