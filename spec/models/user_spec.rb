@@ -467,7 +467,7 @@ RSpec.describe User, type: :model do
     it { expect(user.to_param).to eq(user.key) }
   end
 
-  describe 'dependent destroy' do
+  describe 'dependent delete_all' do
     context 'with access token' do
       let(:user) { create(:user, :with_access_token) }
       let(:user_access_tokens) { user.access_tokens }

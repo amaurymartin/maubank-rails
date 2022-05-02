@@ -20,6 +20,7 @@ class Payment < ApplicationRecord
   validate :category_and_wallet_must_belong_to_same_user
 
   before_save :update_wallet_balance, if: -> { new_record? || amount_changed? }
+  after_destroy :update_wallet_balance
 
   def to_param
     key

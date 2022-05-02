@@ -247,5 +247,28 @@ RSpec.describe Payment, type: :model do
         it { expect(payment).not_to have_received(:update_wallet_balance) }
       end
     end
+
+    describe 'on_destroy' do
+      let(:payment) { create(:payment) }
+
+      context 'when payment is destroyed' do
+        before do
+          allow(payment).to receive(:update_wallet_balance)
+          payment.destroy
+        end
+
+        it { expect(payment).to have_received(:update_wallet_balance) }
+      end
+
+      context 'when payment is not destroyed' do
+        before do
+          allow(payment).to receive(:update_wallet_balance)
+          allow(payment).to receive(:destroy).and_return(false)
+          payment.destroy
+        end
+
+        it { expect(payment).not_to have_received(:update_wallet_balance) }
+      end
+    end
   end
 end
