@@ -287,7 +287,7 @@ RSpec.describe Wallet, type: :model do
     end
   end
 
-  describe 'dependent destroy' do
+  describe 'dependent delete_all' do
     context 'with payment' do
       let(:wallet) { create(:wallet, :with_payment) }
       let(:wallet_payments) { wallet.payments }
