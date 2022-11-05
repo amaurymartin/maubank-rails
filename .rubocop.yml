@@ -14,9 +14,6 @@ AllCops:
 Layout/LineLength:
   Max: 80
 
-Metrics/BlockLength:
-  AllowedMethods: ['describe', 'define', 'factory']
-
 RSpec/ExampleLength:
   Max: 10
 

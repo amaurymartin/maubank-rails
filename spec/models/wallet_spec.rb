@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Wallet, type: :model do
+RSpec.describe Wallet do
   describe '#validate' do
     subject(:wallet) { build(:wallet) }
 

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Goal, type: :model do
+RSpec.describe Goal do
   describe '#validate' do
     subject(:goal) { build(:goal) }
 

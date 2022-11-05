@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Users', type: :request do
+RSpec.describe 'Users' do
   let(:response_body) { JSON.parse(response.body).deep_symbolize_keys }
   let(:current_user) { create(:user) }
   let(:user_keys) do

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe AccessToken, type: :model do
+RSpec.describe AccessToken do
   describe '#validate' do
     subject(:access_token) { build(:access_token) }
 

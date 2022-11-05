@@ -5,6 +5,10 @@ class UsersController < ApplicationController
   before_action :set_user, except: :create
   before_action :check_ownership, except: :create
 
+  def show
+    render :show, locals: { user: @user }, status: :ok
+  end
+
   def create
     @user = User.new(user_params)
 
@@ -13,10 +17,6 @@ class UsersController < ApplicationController
     else
       render :errors, status: :unprocessable_entity
     end
-  end
-
-  def show
-    render :show, locals: { user: @user }, status: :ok
   end
 
   def update

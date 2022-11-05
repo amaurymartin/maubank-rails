@@ -3,16 +3,6 @@
 class CategoriesController < ApplicationController
   before_action :set_category, except: %i[create index]
 
-  def create
-    @category = current_user.categories.new(category_params)
-
-    if @category.save
-      render :show, locals: { category: @category }, status: :created
-    else
-      render :errors, status: :unprocessable_entity
-    end
-  end
-
   def index
     @categories = current_user.categories
 
@@ -21,6 +11,16 @@ class CategoriesController < ApplicationController
 
   def show
     render :show, locals: { category: @category }, status: :ok
+  end
+
+  def create
+    @category = current_user.categories.new(category_params)
+
+    if @category.save
+      render :show, locals: { category: @category }, status: :created
+    else
+      render :errors, status: :unprocessable_entity
+    end
   end
 
   def update

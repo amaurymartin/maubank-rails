@@ -3,16 +3,6 @@
 class GoalsController < ApplicationController
   before_action :set_goal, except: %i[create index]
 
-  def create
-    @goal = current_user.goals.new(goal_params)
-
-    if @goal.save
-      render :show, locals: { goal: @goal }, status: :created
-    else
-      render :errors, status: :unprocessable_entity
-    end
-  end
-
   def index
     @goals = current_user.goals
 
@@ -21,6 +11,16 @@ class GoalsController < ApplicationController
 
   def show
     render :show, locals: { goal: @goal }, status: :ok
+  end
+
+  def create
+    @goal = current_user.goals.new(goal_params)
+
+    if @goal.save
+      render :show, locals: { goal: @goal }, status: :created
+    else
+      render :errors, status: :unprocessable_entity
+    end
   end
 
   def update

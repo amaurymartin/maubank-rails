@@ -3,6 +3,12 @@
 class WalletsController < ApplicationController
   before_action :set_wallet, except: %i[create index]
 
+  def index
+    @wallets = current_user.wallets
+
+    render :index, locals: { wallets: @wallets }, status: :ok
+  end
+
   def create
     @wallet = current_user.wallets.new(wallet_params)
 
@@ -11,12 +17,6 @@ class WalletsController < ApplicationController
     else
       render :errors, status: :unprocessable_entity
     end
-  end
-
-  def index
-    @wallets = current_user.wallets
-
-    render :index, locals: { wallets: @wallets }, status: :ok
   end
 
   def update

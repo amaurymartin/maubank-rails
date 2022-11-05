@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Health', type: :request do
+RSpec.describe 'Health' do
   describe 'GET /health' do
     before { get health_path }
 
