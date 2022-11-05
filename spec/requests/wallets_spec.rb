@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Wallets', type: :request do
+RSpec.describe 'Wallets' do
   let(:response_body) { JSON.parse(response.body).deep_symbolize_keys }
   let(:current_user) { create(:user) }
   let(:wallet_keys) { %i[key description balance created_at updated_at links] }

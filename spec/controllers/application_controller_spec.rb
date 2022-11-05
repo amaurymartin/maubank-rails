@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Application', type: :controller do
+RSpec.describe 'Application' do
   let(:user) { create(:user) }
   let(:access_token) { user.access_tokens.build }
   let(:plain_access_token) { access_token.send(:generated_token) }

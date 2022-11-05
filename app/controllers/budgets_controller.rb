@@ -4,6 +4,10 @@ class BudgetsController < ApplicationController
   before_action :set_category, only: :create
   before_action :set_budget, except: :create
 
+  def show
+    render :show, locals: { budget: @budget }, status: :ok
+  end
+
   def create
     @budget = @category.budgets.new(budget_params)
 
@@ -12,10 +16,6 @@ class BudgetsController < ApplicationController
     else
       render :errors, status: :unprocessable_entity
     end
-  end
-
-  def show
-    render :show, locals: { budget: @budget }, status: :ok
   end
 
   def update

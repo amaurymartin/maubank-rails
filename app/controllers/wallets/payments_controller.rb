@@ -5,6 +5,12 @@ module Wallets
     before_action :set_wallet
     before_action :set_category, only: :create
 
+    def index
+      @payments = @wallet.payments.includes(:category)
+
+      render 'payments/index', locals: { payments: @payments }, status: :ok
+    end
+
     def create
       @payment = @wallet.payments.new(payment_params)
 
@@ -13,12 +19,6 @@ module Wallets
       else
         render 'payments/errors', status: :unprocessable_entity
       end
-    end
-
-    def index
-      @payments = @wallet.payments.includes(:category)
-
-      render 'payments/index', locals: { payments: @payments }, status: :ok
     end
 
     private

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Category, type: :model do
+RSpec.describe Category do
   describe '#validate' do
     subject(:category) { build(:category) }
 

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Goals', type: :request do
+RSpec.describe 'Goals' do
   let(:response_body) { JSON.parse(response.body).deep_symbolize_keys }
   let(:current_user) { create(:user) }
   let(:goal_keys) do

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# frozen_string_literal: true
-
 json.budget do
   json.partial! budget, as: :budget
 

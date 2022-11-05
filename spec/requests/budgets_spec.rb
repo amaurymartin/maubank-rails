@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Budgets', type: :request do
+RSpec.describe 'Budgets' do
   let(:response_body) { JSON.parse(response.body).deep_symbolize_keys }
   let(:current_user) { create(:user) }
   let(:category) { create(:category, user: current_user) }

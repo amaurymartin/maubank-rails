@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Budget, type: :model do
+RSpec.describe Budget do
   describe '#validate' do
     subject(:budget) { build(:budget) }
 

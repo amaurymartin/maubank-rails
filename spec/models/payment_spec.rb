@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Payment, type: :model do
+RSpec.describe Payment do
   describe '#validate' do
     subject(:payment) { build(:payment) }
 
