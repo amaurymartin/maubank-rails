@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 json.payment do
-  json.partial! 'payments/payment', payment: payment
+  json.partial!('payments/payment', payment:)
 
   json.wallet do
     json.extract! payment.wallet, :key, :description, :balance

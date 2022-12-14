@@ -2,7 +2,7 @@
 
 json.payments do
   json.array! @payments do |payment|
-    json.partial! 'payments/payment', payment: payment
+    json.partial!('payments/payment', payment:)
 
     json.wallet do
       json.extract! payment.wallet, :key, :description, :balance
