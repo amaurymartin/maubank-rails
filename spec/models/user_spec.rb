@@ -1,5 +1,29 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: users
+#
+#  id              :bigint           not null, primary key
+#  born_on         :date
+#  confirmed_at    :datetime
+#  documentation   :text
+#  email           :text             not null
+#  full_name       :text
+#  key             :uuid             not null
+#  nickname        :text             not null
+#  password_digest :text             not null
+#  username        :text
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#
+# Indexes
+#
+#  index_users_on_documentation  (documentation) UNIQUE
+#  index_users_on_email          (email) UNIQUE
+#  index_users_on_key            (key) UNIQUE
+#  index_users_on_username       (username) UNIQUE
+#
 require 'rails_helper'
 
 RSpec.describe User do
