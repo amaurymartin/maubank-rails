@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.2.0'
+ruby '3.2.1'
 
 gem 'bcrypt', '~> 3.1.7'
 gem 'bootsnap', require: false
@@ -15,7 +15,7 @@ gem 'jbuilder'
 gem 'pg', '~> 1.1'
 gem 'puma', '~> 5.0'
 # gem 'rack-cors'
-gem 'rails', '~> 7.0.4', '>= 7.0.4.1'
+gem 'rails', '~> 7.0.4', '>= 7.0.4.2'
 # gem 'redis', '~> 4.0'
 gem 'root_domain'
 gem 'validators'
