@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Goals' do
-  let(:response_body) { JSON.parse(response.body).deep_symbolize_keys }
+  let(:response_body) { response.parsed_body.deep_symbolize_keys }
   let(:current_user) { create(:user) }
   let(:goal_keys) do
     %i[key description amount starts_at ends_at created_at updated_at links]
