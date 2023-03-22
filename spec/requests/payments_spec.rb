@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Payments' do
-  let(:response_body) { JSON.parse(response.body).deep_symbolize_keys }
+  let(:response_body) { response.parsed_body.deep_symbolize_keys }
   let(:current_user) { create(:user) }
   let(:wallet) { create(:wallet, user: current_user) }
   let(:category) { create(:category, user: current_user) }

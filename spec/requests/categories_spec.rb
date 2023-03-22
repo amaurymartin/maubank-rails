@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Categories' do
-  let(:response_body) { JSON.parse(response.body).deep_symbolize_keys }
+  let(:response_body) { response.parsed_body.deep_symbolize_keys }
   let(:current_user) { create(:user) }
   let(:category_keys) { %i[key description created_at updated_at links] }
   let(:budget_keys) { %i[key amount starts_at ends_at] }
