@@ -33,7 +33,7 @@ FactoryBot.define do
     amount { Faker::Number.between(from: -999_999_999.99, to: 999_999_999.99) }
 
     trait :categorized do
-      category { create(:category, user: wallet.user) }
+      category { association :category, user: }
     end
   end
 end
