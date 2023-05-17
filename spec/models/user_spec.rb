@@ -235,7 +235,7 @@ RSpec.describe User do
       subject(:user) { create(:user) }
 
       it do
-        expect { user.update(email: Faker::Internet.safe_email) && user.reload }
+        expect { user.update(email: Faker::Internet.email) && user.reload }
           .not_to change(user, :email)
       end
     end
