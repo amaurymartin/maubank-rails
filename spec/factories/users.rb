@@ -29,7 +29,7 @@ FactoryBot.define do
     full_name { Faker::Name.name }
     nickname { Faker::TvShows::GameOfThrones.dragon }
     username { Faker::Internet.username(specifier: full_name) }
-    email { Faker::Internet.safe_email(name: full_name) }
+    email { Faker::Internet.email(name: full_name) }
     password { Faker::Internet.password(min_length: 8) }
     password_confirmation { password }
     documentation { Faker::IDNumber.brazilian_citizen_number }
