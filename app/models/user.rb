@@ -88,7 +88,7 @@ class User < ApplicationRecord
   end
 
   def valid_brazilian_cpf?
-    return if CPF.valid?(documentation, strict: true)
+    return true if CPF.valid?(documentation, strict: true)
 
     errors.add(:documentation, :invalid)
   end
