@@ -57,7 +57,7 @@ RSpec.describe Payment do
       let(:wallet) { create(:wallet) }
 
       it :aggregate_failures do
-        expect(payment).to be_invalid
+        expect(payment).not_to be_valid
         expect(payment.errors).to be_added(:category, :invalid)
       end
     end
@@ -68,7 +68,7 @@ RSpec.describe Payment do
       subject(:payment) { build(:payment, wallet: nil) }
 
       it :aggregate_failures do
-        expect(payment).to be_invalid
+        expect(payment).not_to be_valid
         expect(payment.errors).to be_added(:wallet, :blank)
       end
     end
@@ -110,7 +110,7 @@ RSpec.describe Payment do
       let(:first_payment) { create(:payment) }
 
       it :aggregate_failures do
-        expect(second_payment).to be_invalid
+        expect(second_payment).not_to be_valid
         expect(second_payment.errors)
           .to be_added(:key, :taken, { value: first_payment.key })
       end
@@ -131,7 +131,7 @@ RSpec.describe Payment do
       subject(:payment) { build(:payment, effective_date: nil) }
 
       it :aggregate_failures do
-        expect(payment).to be_invalid
+        expect(payment).not_to be_valid
         expect(payment.errors).to be_added(:effective_date, :blank)
       end
     end
@@ -142,7 +142,7 @@ RSpec.describe Payment do
       subject(:payment) { build(:payment, amount: nil) }
 
       it :aggregate_failures do
-        expect(payment).to be_invalid
+        expect(payment).not_to be_valid
         expect(payment.errors).to be_added(:amount, :not_a_number, value: nil)
       end
     end
@@ -153,7 +153,7 @@ RSpec.describe Payment do
       let(:amount) { -1_000_000_000.00 }
 
       it 'must be greater than -1_000_000_000.00', :aggregate_failures do
-        expect(payment).to be_invalid
+        expect(payment).not_to be_valid
         expect(payment.errors).to be_added(
           :amount, :greater_than, { value: amount, count: -1_000_000_000.00 }
         )
@@ -170,7 +170,7 @@ RSpec.describe Payment do
       subject(:payment) { build(:payment, amount: 0.00) }
 
       it 'must be other than zero', :aggregate_failures do
-        expect(payment).to be_invalid
+        expect(payment).not_to be_valid
         expect(payment.errors)
           .to be_added(:amount, :other_than, { value: 0.00, count: 0.00 })
       end
@@ -188,7 +188,7 @@ RSpec.describe Payment do
       let(:amount) { 1_000_000_000.00 }
 
       it 'must be less than 1_000_000_000.00', :aggregate_failures do
-        expect(payment).to be_invalid
+        expect(payment).not_to be_valid
         expect(payment.errors).to be_added(
           :amount, :less_than, { value: amount, count: 1_000_000_000.00 }
         )

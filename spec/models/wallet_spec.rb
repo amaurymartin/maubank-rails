@@ -36,7 +36,7 @@ RSpec.describe Wallet do
       subject(:wallet) { build(:wallet, user: nil) }
 
       it :aggregate_failures do
-        expect(wallet).to be_invalid
+        expect(wallet).not_to be_valid
         expect(wallet.errors).to be_added(:user, :blank)
       end
     end
@@ -89,7 +89,7 @@ RSpec.describe Wallet do
       let(:first_wallet) { create(:wallet) }
 
       it :aggregate_failures do
-        expect(second_wallet).to be_invalid
+        expect(second_wallet).not_to be_valid
         expect(second_wallet.errors)
           .to be_added(:key, :taken, { value: first_wallet.key })
       end
@@ -110,7 +110,7 @@ RSpec.describe Wallet do
       subject(:wallet) { build(:wallet, description: nil) }
 
       it :aggregate_failures do
-        expect(wallet).to be_invalid
+        expect(wallet).not_to be_valid
         expect(wallet.errors).to be_added(:description, :blank)
       end
     end
@@ -119,7 +119,7 @@ RSpec.describe Wallet do
       subject(:wallet) { build(:wallet, description: '') }
 
       it :aggregate_failures do
-        expect(wallet).to be_invalid
+        expect(wallet).not_to be_valid
         expect(wallet.errors).to be_added(:description, :blank)
       end
     end
@@ -134,7 +134,7 @@ RSpec.describe Wallet do
       let(:first_wallet) { create(:wallet) }
 
       it :aggregate_failures do
-        expect(second_wallet).to be_invalid
+        expect(second_wallet).not_to be_valid
         expect(second_wallet.errors).to be_added(
           :description, :taken, { value: first_wallet.description }
         )
@@ -151,7 +151,7 @@ RSpec.describe Wallet do
       let(:first_wallet) { create(:wallet) }
 
       it 'must be case insensitive', :aggregate_failures do
-        expect(second_wallet).to be_invalid
+        expect(second_wallet).not_to be_valid
         expect(second_wallet.errors).to be_added(
           :description, :taken, { value: first_wallet.description.upcase }
         )
@@ -174,7 +174,7 @@ RSpec.describe Wallet do
       subject(:wallet) { build(:wallet, balance: nil) }
 
       it :aggregate_failures do
-        expect(wallet).to be_invalid
+        expect(wallet).not_to be_valid
         expect(wallet.errors).to be_added(:balance, :not_a_number, value: nil)
       end
     end
@@ -185,7 +185,7 @@ RSpec.describe Wallet do
       let(:balance) { -1_000_000_000.00 }
 
       it 'must be greater than -1_000_000_000.00', :aggregate_failures do
-        expect(wallet).to be_invalid
+        expect(wallet).not_to be_valid
         expect(wallet.errors).to be_added(
           :balance, :greater_than, { value: balance, count: -1_000_000_000.00 }
         )
@@ -216,7 +216,7 @@ RSpec.describe Wallet do
       let(:balance) { 1_000_000_000.00 }
 
       it 'must be less than 1_000_000_000.00', :aggregate_failures do
-        expect(wallet).to be_invalid
+        expect(wallet).not_to be_valid
         expect(wallet.errors).to be_added(
           :balance, :less_than, { value: balance, count: 1_000_000_000.00 }
         )
