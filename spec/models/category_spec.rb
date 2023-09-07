@@ -35,7 +35,7 @@ RSpec.describe Category do
       subject(:category) { build(:category, user: nil) }
 
       it :aggregate_failures do
-        expect(category).to be_invalid
+        expect(category).not_to be_valid
         expect(category.errors).to be_added(:user, :blank)
       end
     end
@@ -88,7 +88,7 @@ RSpec.describe Category do
       let(:first_category) { create(:category) }
 
       it :aggregate_failures do
-        expect(second_category).to be_invalid
+        expect(second_category).not_to be_valid
         expect(second_category.errors)
           .to be_added(:key, :taken, { value: first_category.key })
       end
@@ -109,7 +109,7 @@ RSpec.describe Category do
       subject(:category) { build(:category, description: nil) }
 
       it :aggregate_failures do
-        expect(category).to be_invalid
+        expect(category).not_to be_valid
         expect(category.errors).to be_added(:description, :blank)
       end
     end
@@ -118,7 +118,7 @@ RSpec.describe Category do
       subject(:category) { build(:category, description: '') }
 
       it :aggregate_failures do
-        expect(category).to be_invalid
+        expect(category).not_to be_valid
         expect(category.errors).to be_added(:description, :blank)
       end
     end
@@ -133,7 +133,7 @@ RSpec.describe Category do
       let(:first_category) { create(:category) }
 
       it :aggregate_failures do
-        expect(second_category).to be_invalid
+        expect(second_category).not_to be_valid
         expect(second_category.errors)
           .to be_added(
             :description, :taken, { value: first_category.description }
@@ -151,7 +151,7 @@ RSpec.describe Category do
       let(:first_category) { create(:category) }
 
       it :aggregate_failures do
-        expect(second_category).to be_invalid
+        expect(second_category).not_to be_valid
         expect(second_category.errors)
           .to be_added(
             :description, :taken, { value: first_category.description.upcase }

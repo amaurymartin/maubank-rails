@@ -46,7 +46,7 @@ RSpec.describe Budget do
       subject(:budget) { build(:budget, category: nil) }
 
       it :aggregate_failures do
-        expect(budget).to be_invalid
+        expect(budget).not_to be_valid
         expect(budget.errors).to be_added(:category, :blank)
       end
     end
@@ -99,7 +99,7 @@ RSpec.describe Budget do
       let(:first_budget) { create(:budget) }
 
       it :aggregate_failures do
-        expect(second_budget).to be_invalid
+        expect(second_budget).not_to be_valid
         expect(second_budget.errors)
           .to be_added(:key, :taken, { value: first_budget.key })
       end
@@ -120,7 +120,7 @@ RSpec.describe Budget do
       subject(:budget) { build(:budget, amount: nil) }
 
       it :aggregate_failures do
-        expect(budget).to be_invalid
+        expect(budget).not_to be_valid
         expect(budget.errors).to be_added(:amount, :not_a_number, value: nil)
       end
     end
@@ -131,7 +131,7 @@ RSpec.describe Budget do
       let(:negative_amount) { -0.01 }
 
       it 'must be greater than zero', :aggregate_failures do
-        expect(budget).to be_invalid
+        expect(budget).not_to be_valid
         expect(budget.errors).to be_added(
           :amount, :greater_than, { value: negative_amount, count: 0.00 }
         )
@@ -142,7 +142,7 @@ RSpec.describe Budget do
       subject(:budget) { build(:budget, amount: 0.00) }
 
       it 'must be greater than zero', :aggregate_failures do
-        expect(budget).to be_invalid
+        expect(budget).not_to be_valid
         expect(budget.errors).to be_added(
           :amount, :greater_than, { value: 0.00, count: 0.0 }
         )
@@ -161,7 +161,7 @@ RSpec.describe Budget do
       let(:amount) { 1_000_000_000.00 }
 
       it 'must be less than 1_000_000_000.00', :aggregate_failures do
-        expect(budget).to be_invalid
+        expect(budget).not_to be_valid
         expect(budget.errors).to be_added(
           :amount, :less_than, { value: amount, count: 1_000_000_000.00 }
         )
@@ -174,7 +174,7 @@ RSpec.describe Budget do
       subject(:budget) { build(:budget, starts_at: nil) }
 
       it :aggregate_failures do
-        expect(budget).to be_invalid
+        expect(budget).not_to be_valid
         expect(budget.errors).to be_added(:starts_at, :blank)
       end
     end
@@ -189,7 +189,7 @@ RSpec.describe Budget do
       let(:first_budget) { create(:budget) }
 
       it :aggregate_failures do
-        expect(second_budget).to be_invalid
+        expect(second_budget).not_to be_valid
         expect(second_budget.errors)
           .to be_added(:starts_at, :taken, { value: first_budget.starts_at })
       end
@@ -222,7 +222,7 @@ RSpec.describe Budget do
       let(:starts_at) { Date.current - 1.month }
 
       it :aggregate_failures do
-        expect(budget).to be_invalid
+        expect(budget).not_to be_valid
         expect(budget.errors).to be_added(
           :starts_at, :greater_than_or_equal_to, {
             value: starts_at.beginning_of_month,
@@ -314,7 +314,7 @@ RSpec.describe Budget do
       let(:first_budget) { create(:budget, starts_at: Date.current + 1.month) }
 
       it :aggregate_failures do
-        expect(second_budget).to be_invalid
+        expect(second_budget).not_to be_valid
         expect(second_budget.errors)
           .to be_added(:ends_at, :taken, { value: first_budget.ends_at })
       end
@@ -350,7 +350,7 @@ RSpec.describe Budget do
       let(:ends_at) { Date.current - 1.month }
 
       it :aggregate_failures do
-        expect(budget).to be_invalid
+        expect(budget).not_to be_valid
         expect(budget.errors).to be_added(
           :ends_at, :greater_than_or_equal_to,
           { value: ends_at.end_of_month, count: starts_at.beginning_of_month }
@@ -383,7 +383,7 @@ RSpec.describe Budget do
       let(:ends_at) { Date.current }
 
       it :aggregate_failures do
-        expect(budget).to be_invalid
+        expect(budget).not_to be_valid
         expect(budget.errors).to be_added(
           :ends_at, :greater_than_or_equal_to,
           { value: ends_at.end_of_month, count: starts_at.beginning_of_month }

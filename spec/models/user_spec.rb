@@ -69,7 +69,7 @@ RSpec.describe User do
       let(:first_user) { create(:user) }
 
       it :aggregate_failures do
-        expect(second_user).to be_invalid
+        expect(second_user).not_to be_valid
         expect(second_user.errors)
           .to be_added(:key, :taken, { value: first_user.key })
       end
@@ -96,7 +96,7 @@ RSpec.describe User do
       subject(:user) { build(:user, full_name: '') }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:full_name, :blank)
       end
     end
@@ -107,7 +107,7 @@ RSpec.describe User do
       subject(:user) { build(:user, nickname: nil) }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:nickname, :blank)
       end
     end
@@ -116,7 +116,7 @@ RSpec.describe User do
       subject(:user) { build(:user, nickname: '') }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:nickname, :blank)
       end
     end
@@ -133,7 +133,7 @@ RSpec.describe User do
       subject(:user) { build(:user, username: '') }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:username, :blank)
       end
     end
@@ -152,7 +152,7 @@ RSpec.describe User do
       let(:first_user) { create(:user) }
 
       it :aggregate_failures do
-        expect(second_user).to be_invalid
+        expect(second_user).not_to be_valid
         expect(second_user.errors)
           .to be_added(:username, :taken, { value: first_user.username })
       end
@@ -166,7 +166,7 @@ RSpec.describe User do
       let(:first_user) { create(:user) }
 
       it 'upper and lower case must be seen as style', :aggregate_failures do
-        expect(second_user).to be_invalid
+        expect(second_user).not_to be_valid
         expect(second_user.errors)
           .to be_added(:username, :taken, { value: first_user.username.upcase })
       end
@@ -178,7 +178,7 @@ RSpec.describe User do
       subject(:user) { build(:user, email: nil) }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:email, :blank)
       end
     end
@@ -187,7 +187,7 @@ RSpec.describe User do
       subject(:user) { build(:user, email: '') }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:email, :blank)
       end
     end
@@ -198,7 +198,7 @@ RSpec.describe User do
       let(:invalid_email) { 'not_a_valid_email' }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(
           :email, :invalid_email, { value: invalid_email }
         )
@@ -211,7 +211,7 @@ RSpec.describe User do
       let(:first_user) { create(:user) }
 
       it :aggregate_failures do
-        expect(second_user).to be_invalid
+        expect(second_user).not_to be_valid
         expect(second_user.errors)
           .to be_added(:email, :taken, { value: first_user.email })
       end
@@ -225,7 +225,7 @@ RSpec.describe User do
       let(:first_user) { create(:user) }
 
       it 'emails must be case insensitive', :aggregate_failures do
-        expect(second_user).to be_invalid
+        expect(second_user).not_to be_valid
         expect(second_user.errors)
           .to be_added(:email, :taken, { value: first_user.email.upcase })
       end
@@ -246,7 +246,7 @@ RSpec.describe User do
       subject(:user) { build(:user, password: nil) }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:password, :blank)
       end
     end
@@ -255,7 +255,7 @@ RSpec.describe User do
       subject(:user) { build(:user, password: '') }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:password, :blank)
       end
     end
@@ -264,7 +264,7 @@ RSpec.describe User do
       subject(:user) { build(:user, password: 'short') }
 
       it 'must has at least 8 characters', :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:password, :too_short, { count: 8 })
       end
     end
@@ -275,7 +275,7 @@ RSpec.describe User do
       subject(:user) { build(:user, password_confirmation: nil) }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:password_confirmation, :blank)
       end
     end
@@ -284,7 +284,7 @@ RSpec.describe User do
       subject(:user) { build(:user, password_confirmation: '') }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:password_confirmation, :blank)
       end
     end
@@ -293,7 +293,7 @@ RSpec.describe User do
       subject(:user) { build(:user, password_confirmation: 'different') }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(
           :password_confirmation, :confirmation, { attribute: 'Password' }
         )
@@ -314,7 +314,7 @@ RSpec.describe User do
       before { user.password = Faker::Internet.password(min_length: 8) }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(
           :password_confirmation, :confirmation, { attribute: 'Password' }
         )
@@ -333,7 +333,7 @@ RSpec.describe User do
       subject(:user) { build(:user, documentation: '') }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:documentation, :invalid)
       end
     end
@@ -342,7 +342,7 @@ RSpec.describe User do
       subject(:user) { build(:user, documentation: 'invalid') }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:documentation, :invalid)
       end
     end
@@ -371,7 +371,7 @@ RSpec.describe User do
       let(:first_user) { create(:user) }
 
       it :aggregate_failures do
-        expect(second_user).to be_invalid
+        expect(second_user).not_to be_valid
         expect(second_user.errors).to be_added(
           :documentation, :taken, { value: first_user.documentation }
         )
@@ -411,7 +411,7 @@ RSpec.describe User do
       let(:date_in_future) { Date.current + 1.day }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(
           :born_on, :less_than_or_equal_to,
           { value: date_in_future, count: Date.current }
@@ -437,7 +437,7 @@ RSpec.describe User do
       subject(:user) { build(:user, confirmed_at: Time.current) }
 
       it :aggregate_failures do
-        expect(user).to be_invalid
+        expect(user).not_to be_valid
         expect(user.errors).to be_added(:confirmed_at, :present)
       end
     end

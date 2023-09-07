@@ -34,7 +34,7 @@ RSpec.describe AccessToken do
       subject(:access_token) { build(:access_token, user: nil) }
 
       it :aggregate_failures do
-        expect(access_token).to be_invalid
+        expect(access_token).not_to be_valid
         expect(access_token.errors).to be_added(:user, :blank)
       end
     end
@@ -80,7 +80,7 @@ RSpec.describe AccessToken do
       end
 
       it :aggregate_failures do
-        expect(access_token).to be_invalid
+        expect(access_token).not_to be_valid
         expect(access_token.errors)
           .to be_added(:token, :invalid, { value: invalid_token })
       end
@@ -99,7 +99,7 @@ RSpec.describe AccessToken do
       end
 
       it :aggregate_failures do
-        expect(second_access_token).to be_invalid
+        expect(second_access_token).not_to be_valid
         expect(second_access_token.errors)
           .to be_added(:token, :taken, { value: first_access_token.token })
       end
@@ -116,7 +116,7 @@ RSpec.describe AccessToken do
       end
 
       it :aggregate_failures do
-        expect(second_access_token).to be_invalid
+        expect(second_access_token).not_to be_valid
         expect(second_access_token.errors)
           .to be_added(:token, :taken, { value: first_access_token.token })
       end
@@ -148,7 +148,7 @@ RSpec.describe AccessToken do
       subject(:access_token) { build(:access_token, revoked_at: Time.current) }
 
       it :aggregate_failures do
-        expect(access_token).to be_invalid
+        expect(access_token).not_to be_valid
         expect(access_token.errors).to be_added(:revoked_at, :present)
       end
     end
