@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.2.2'
 
@@ -13,15 +12,15 @@ gem 'dotenv-rails'
 gem 'jbuilder'
 # gem 'kredis'
 gem 'pg', '~> 1.1'
-gem 'puma', '~> 5.0'
+gem 'puma', '>= 5.0'
 # gem 'rack-cors'
-gem 'rails', '~> 7.0.8'
-# gem 'redis', '~> 4.0'
+gem 'rails', '~> 7.1.2'
+# gem 'redis', '>= 4.0.1'
 gem 'root_domain'
 gem 'validators'
 
 group :development, :test do
-  gem 'debug', platforms: %i[mri mingw x64_mingw]
+  gem 'debug', platforms: %i[mri windows]
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'rspec-rails'
@@ -41,4 +40,4 @@ group :test do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
+gem 'tzinfo-data', platforms: %i[windows jruby]
