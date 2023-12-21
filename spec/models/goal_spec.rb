@@ -49,8 +49,8 @@ RSpec.describe Goal do
       let(:other_user) { create(:user) }
 
       it do
-        expect { goal.update(user: other_user) && goal.reload }
-          .not_to change(goal, :user)
+        expect { goal.update(user: other_user) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'user_id')
       end
     end
   end
@@ -101,8 +101,8 @@ RSpec.describe Goal do
       subject(:goal) { create(:goal) }
 
       it do
-        expect { goal.update(key: SecureRandom.uuid) && goal.reload }
-          .not_to change(goal, :key)
+        expect { goal.update(key: SecureRandom.uuid) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'key')
       end
     end
   end
@@ -291,8 +291,8 @@ RSpec.describe Goal do
       subject(:goal) { create(:goal) }
 
       it do
-        expect { goal.update(created_at: Time.current) && goal.reload }
-          .not_to change(goal, :created_at)
+        expect { goal.update(created_at: Time.current) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'created_at')
       end
     end
   end
