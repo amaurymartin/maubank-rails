@@ -46,8 +46,8 @@ RSpec.describe Category do
       let(:other_user) { create(:user) }
 
       it do
-        expect { category.update(user: other_user) && category.reload }
-          .not_to change(category, :user)
+        expect { category.update(user: other_user) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'user_id')
       end
     end
   end
@@ -98,8 +98,8 @@ RSpec.describe Category do
       subject(:category) { create(:category) }
 
       it do
-        expect { category.update(key: SecureRandom.uuid) && category.reload }
-          .not_to change(category, :key)
+        expect { category.update(key: SecureRandom.uuid) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'key')
       end
     end
   end
@@ -175,8 +175,8 @@ RSpec.describe Category do
       subject(:category) { create(:category) }
 
       it do
-        expect { category.update(created_at: Time.current) && category.reload }
-          .not_to change(category, :created_at)
+        expect { category.update(created_at: Time.current) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'created_at')
       end
     end
   end

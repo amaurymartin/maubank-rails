@@ -47,8 +47,8 @@ RSpec.describe Wallet do
       let(:other_user) { create(:user) }
 
       it do
-        expect { wallet.update(user: other_user) && wallet.reload }
-          .not_to change(wallet, :user)
+        expect { wallet.update(user: other_user) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'user_id')
       end
     end
   end
@@ -99,8 +99,8 @@ RSpec.describe Wallet do
       subject(:wallet) { create(:wallet) }
 
       it do
-        expect { wallet.update(key: SecureRandom.uuid) && wallet.reload }
-          .not_to change(wallet, :key)
+        expect { wallet.update(key: SecureRandom.uuid) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'key')
       end
     end
   end
@@ -229,8 +229,8 @@ RSpec.describe Wallet do
       subject(:wallet) { create(:wallet) }
 
       it do
-        expect { wallet.update(created_at: Time.current) && wallet.reload }
-          .not_to change(wallet, :created_at)
+        expect { wallet.update(created_at: Time.current) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'created_at')
       end
     end
   end

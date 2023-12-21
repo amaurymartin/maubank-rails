@@ -45,8 +45,8 @@ RSpec.describe AccessToken do
       let(:other_user) { create(:user) }
 
       it do
-        expect { access_token.update(user: other_user) && access_token.reload }
-          .not_to change(access_token, :user)
+        expect { access_token.update(user: other_user) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'user_id')
       end
     end
   end
@@ -130,9 +130,8 @@ RSpec.describe AccessToken do
       end
 
       it do
-        expect do
-          access_token.update(token: new_encrypted_token) && access_token.reload
-        end.not_to change(access_token, :token)
+        expect { access_token.update(token: new_encrypted_token) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'token')
       end
     end
   end
@@ -159,9 +158,8 @@ RSpec.describe AccessToken do
       subject(:access_token) { create(:access_token) }
 
       it do
-        expect do
-          access_token.update(created_at: Time.current) && access_token.reload
-        end.not_to change(access_token, :created_at)
+        expect { access_token.update(created_at: Time.current) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'created_at')
       end
     end
   end

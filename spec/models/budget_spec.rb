@@ -57,8 +57,8 @@ RSpec.describe Budget do
       let(:other_category) { create(:category) }
 
       it do
-        expect { budget.update(category: other_category) && budget.reload }
-          .not_to change(budget, :category)
+        expect { budget.update(category: other_category) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'category_id')
       end
     end
   end
@@ -109,8 +109,8 @@ RSpec.describe Budget do
       subject(:budget) { create(:budget) }
 
       it do
-        expect { budget.update(key: SecureRandom.uuid) && budget.reload }
-          .not_to change(budget, :key)
+        expect { budget.update(key: SecureRandom.uuid) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'key')
       end
     end
   end
@@ -415,8 +415,8 @@ RSpec.describe Budget do
       subject(:budget) { create(:budget) }
 
       it do
-        expect { budget.update(created_at: Time.current) && budget.reload }
-          .not_to change(budget, :created_at)
+        expect { budget.update(created_at: Time.current) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'created_at')
       end
     end
   end

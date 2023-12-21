@@ -120,8 +120,8 @@ RSpec.describe Payment do
       subject(:payment) { create(:payment) }
 
       it do
-        expect { payment.update(key: SecureRandom.uuid) && payment.reload }
-          .not_to change(payment, :key)
+        expect { payment.update(key: SecureRandom.uuid) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'key')
       end
     end
   end
@@ -201,8 +201,8 @@ RSpec.describe Payment do
       subject(:payment) { create(:payment) }
 
       it do
-        expect { payment.update(created_at: Time.current) && payment.reload }
-          .not_to change(payment, :created_at)
+        expect { payment.update(created_at: Time.current) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'created_at')
       end
     end
   end

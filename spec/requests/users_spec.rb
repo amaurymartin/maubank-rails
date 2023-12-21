@@ -90,7 +90,7 @@ RSpec.describe 'Users' do
       put_with_token_to(user_path(user), current_user, { user: user_params })
     end
 
-    let(:user_params) { attributes_for(:user) }
+    let(:user_params) { attributes_for(:user).except(:email) }
 
     context 'with both key and params valid' do
       let(:user) { current_user }
@@ -105,7 +105,7 @@ RSpec.describe 'Users' do
 
     context 'with valid key and invalid params' do
       let(:user) { current_user }
-      let(:user_params) { attributes_for(:user, nickname: nil) }
+      let(:user_params) { attributes_for(:user, nickname: nil).except(:email) }
 
       it :aggregate_failures do
         expect { make_request and user.reload }.not_to change(user, :attributes)

@@ -79,8 +79,8 @@ RSpec.describe User do
       subject(:user) { create(:user) }
 
       it do
-        expect { user.update(key: SecureRandom.uuid) && user.reload }
-          .not_to change(user, :key)
+        expect { user.update(key: SecureRandom.uuid) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'key')
       end
     end
   end
@@ -235,8 +235,8 @@ RSpec.describe User do
       subject(:user) { create(:user) }
 
       it do
-        expect { user.update(email: Faker::Internet.email) && user.reload }
-          .not_to change(user, :email)
+        expect { user.update(email: Faker::Internet.email) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'email')
       end
     end
   end
@@ -448,8 +448,8 @@ RSpec.describe User do
       subject(:user) { create(:user) }
 
       it do
-        expect { user.update(created_at: Time.current) && user.reload }
-          .not_to change(user, :created_at)
+        expect { user.update(created_at: Time.current) }
+          .to raise_error(ActiveRecord::ReadonlyAttributeError, 'created_at')
       end
     end
   end
