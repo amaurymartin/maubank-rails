@@ -293,7 +293,7 @@ DEPENDENCIES
   jbuilder
   pg (~> 1.1)
   puma (>= 5.0)
-  rails (~> 7.1.3, >= 7.1.3.1)
+  rails (~> 7.1.3, >= 7.1.3.2)
   root_domain
   rspec-rails
   rubocop
