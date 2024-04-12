@@ -32,12 +32,12 @@ FactoryBot.define do
     email { Faker::Internet.email(name: full_name) }
     password { Faker::Internet.password(min_length: 8) }
     password_confirmation { password }
-    documentation { Faker::IDNumber.brazilian_citizen_number }
+    documentation { Faker::IdNumber.brazilian_citizen_number }
     born_on { Faker::Date.backward(days: 1) }
 
     trait :formatted_documentation do
       documentation do
-        Faker::IDNumber.brazilian_citizen_number(formatted: true)
+        Faker::IdNumber.brazilian_citizen_number(formatted: true)
       end
     end
 
