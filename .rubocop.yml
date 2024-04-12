@@ -5,6 +5,10 @@ require:
   - rubocop-rspec_rails
   - rubocop-factory_bot
 
+inherit_mode:
+  merge:
+    - Exclude
+
 AllCops:
   NewCops: enable
   Exclude:
