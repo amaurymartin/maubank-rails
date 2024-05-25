@@ -34,7 +34,7 @@ class AccessToken < ApplicationRecord
 
   scope :usable, lambda {
     where(revoked_at: nil)
-      .where('created_at >= ?', Time.current - ttl_in_minutes)
+      .where(created_at: Time.current - ttl_in_minutes..)
       .order(created_at: :desc)
   }
 
