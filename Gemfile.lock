@@ -306,7 +306,7 @@ DEPENDENCIES
   validators
 
 RUBY VERSION
-   ruby 3.3.0p0
+   ruby 3.3.1p55
 
 BUNDLED WITH
    2.5.10

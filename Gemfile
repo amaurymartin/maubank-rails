@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '3.3.0'
+ruby '3.3.1'
 
 gem 'bcrypt', '~> 3.1.7'
 gem 'bootsnap', require: false
