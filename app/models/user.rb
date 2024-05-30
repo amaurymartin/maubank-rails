@@ -52,8 +52,9 @@ class User < ApplicationRecord
             presence: true,
             uniqueness: { case_sensitive: false },
             allow_nil: true
-  validates :email, presence: true, uniqueness: { case_sensitive: false }
-  validates_email_format_of :email, disposable: true
+  validates :email,
+            presence: true, uniqueness: { case_sensitive: false },
+            format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :born_on,
             comparison: { less_than_or_equal_to: Date.current }, allow_nil: true
   validates :confirmed_at, absence: true, on: :create
