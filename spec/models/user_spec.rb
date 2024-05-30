@@ -200,7 +200,7 @@ RSpec.describe User do
       it :aggregate_failures do
         expect(user).not_to be_valid
         expect(user.errors).to be_added(
-          :email, :invalid_email, { value: invalid_email }
+          :email, :invalid, { value: invalid_email }
         )
       end
     end
