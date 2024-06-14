@@ -15,7 +15,7 @@ class WalletsController < ApplicationController
     if @wallet.save
       render :show, locals: { wallet: @wallet }, status: :created
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 
@@ -23,7 +23,7 @@ class WalletsController < ApplicationController
     if @wallet.update(wallet_params)
       render :show, locals: { wallet: @wallet }, status: :ok
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 
@@ -32,7 +32,7 @@ class WalletsController < ApplicationController
     if @wallet.destroy
       head :no_content
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 

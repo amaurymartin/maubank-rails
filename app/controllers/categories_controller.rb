@@ -19,7 +19,7 @@ class CategoriesController < ApplicationController
     if @category.save
       render :show, locals: { category: @category }, status: :created
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 
@@ -27,7 +27,7 @@ class CategoriesController < ApplicationController
     if @category.update(category_params)
       render :show, locals: { category: @category }, status: :ok
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 
@@ -35,7 +35,7 @@ class CategoriesController < ApplicationController
     if @category.destroy
       head :no_content
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 

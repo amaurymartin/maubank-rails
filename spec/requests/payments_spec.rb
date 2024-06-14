@@ -179,7 +179,7 @@ RSpec.describe 'Payments' do
       it :aggregate_failures do
         expect { make_request and payment.reload }
           .not_to change(payment, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response_body[:errors]).not_to be_empty
       end
     end
@@ -216,7 +216,7 @@ RSpec.describe 'Payments' do
       it :aggregate_failures do
         expect { make_request and payment.reload }
           .not_to change(payment, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
@@ -342,7 +342,7 @@ RSpec.describe 'Payments' do
       it :aggregate_failures do
         expect { make_request and payment.reload }
           .not_to change(payment, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response_body[:errors]).not_to be_empty
       end
     end
@@ -379,7 +379,7 @@ RSpec.describe 'Payments' do
       it :aggregate_failures do
         expect { make_request and payment.reload }
           .not_to change(payment, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
@@ -510,7 +510,7 @@ RSpec.describe 'Payments' do
 
       it :aggregate_failures do
         expect { make_request }.not_to change(Payment, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

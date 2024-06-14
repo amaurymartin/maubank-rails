@@ -14,7 +14,7 @@ class BudgetsController < ApplicationController
     if @budget.save
       render :show, locals: { budget: @budget }, status: :created
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 
@@ -22,7 +22,7 @@ class BudgetsController < ApplicationController
     if @budget.update(budget_params)
       render :show, locals: { budget: @budget }, status: :ok
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 
@@ -30,7 +30,7 @@ class BudgetsController < ApplicationController
     if @budget.destroy
       head :no_content
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 

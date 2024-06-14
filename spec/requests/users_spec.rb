@@ -34,7 +34,7 @@ RSpec.describe 'Users' do
 
       it :aggregate_failures do
         expect { make_request }.not_to change(User, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response_body[:errors]).not_to be_empty
       end
     end
@@ -48,7 +48,7 @@ RSpec.describe 'Users' do
 
       it :aggregate_failures do
         expect { make_request }.not_to change(User, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -109,7 +109,7 @@ RSpec.describe 'Users' do
 
       it :aggregate_failures do
         expect { make_request and user.reload }.not_to change(user, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response_body[:errors]).not_to be_empty
       end
     end
@@ -146,7 +146,7 @@ RSpec.describe 'Users' do
 
       it :aggregate_failures do
         expect { make_request and user.reload }.not_to change(user, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -175,7 +175,7 @@ RSpec.describe 'Users' do
 
       it :aggregate_failures do
         expect { make_request and user.reload }.not_to change(user, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response_body[:errors]).not_to be_empty
       end
     end
@@ -212,7 +212,7 @@ RSpec.describe 'Users' do
 
       it :aggregate_failures do
         expect { make_request and user.reload }.not_to change(user, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -267,7 +267,7 @@ RSpec.describe 'Users' do
 
       it :aggregate_failures do
         expect { make_request }.not_to change(User, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

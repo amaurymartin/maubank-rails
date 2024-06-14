@@ -20,7 +20,7 @@ class PaymentsController < ApplicationController
     if @payment.update(payment_params)
       render :show, locals: { payment: @payment }, status: :ok
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 
@@ -28,7 +28,7 @@ class PaymentsController < ApplicationController
     if @payment.destroy
       head :no_content
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 

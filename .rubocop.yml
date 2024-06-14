@@ -1,7 +1,7 @@
 require:
+  - rubocop-rspec
   - rubocop-performance
   - rubocop-rails
-  - rubocop-rspec
   - rubocop-rspec_rails
   - rubocop-factory_bot
 
@@ -12,10 +12,10 @@ inherit_mode:
 AllCops:
   NewCops: enable
   Exclude:
-    - 'db/**/*'
-    - 'config/**/*'
-    - 'script/**/*'
-    - 'bin/**'
+    - "db/**/*"
+    - "config/**/*"
+    - "script/**/*"
+    - "bin/**"
 
 Layout/LineLength:
   Max: 80

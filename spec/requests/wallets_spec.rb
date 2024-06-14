@@ -30,7 +30,7 @@ RSpec.describe 'Wallets' do
 
       it :aggregate_failures do
         expect { make_request }.not_to change(Wallet, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response_body[:errors]).not_to be_empty
       end
     end
@@ -44,7 +44,7 @@ RSpec.describe 'Wallets' do
 
       it :aggregate_failures do
         expect { make_request }.not_to change(Wallet, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -121,7 +121,7 @@ RSpec.describe 'Wallets' do
       it :aggregate_failures do
         expect { make_request and wallet.reload }
           .not_to change(wallet, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response_body[:errors]).not_to be_empty
       end
     end
@@ -158,7 +158,7 @@ RSpec.describe 'Wallets' do
       it :aggregate_failures do
         expect { make_request and wallet.reload }
           .not_to change(wallet, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -188,7 +188,7 @@ RSpec.describe 'Wallets' do
       it :aggregate_failures do
         expect { make_request and wallet.reload }
           .not_to change(wallet, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response_body[:errors]).not_to be_empty
       end
     end
@@ -225,7 +225,7 @@ RSpec.describe 'Wallets' do
       it :aggregate_failures do
         expect { make_request and wallet.reload }
           .not_to change(wallet, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -275,7 +275,7 @@ RSpec.describe 'Wallets' do
 
       it :aggregate_failures do
         expect { make_request }.not_to change(Wallet, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
