@@ -19,7 +19,7 @@ class GoalsController < ApplicationController
     if @goal.save
       render :show, locals: { goal: @goal }, status: :created
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 
@@ -27,7 +27,7 @@ class GoalsController < ApplicationController
     if @goal.update(goal_params)
       render :show, locals: { goal: @goal }, status: :ok
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 
@@ -35,7 +35,7 @@ class GoalsController < ApplicationController
     if @goal.destroy
       head :no_content
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 

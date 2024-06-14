@@ -15,7 +15,7 @@ class UsersController < ApplicationController
     if @user.save
       render :show, locals: { user: @user }, status: :created
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 
@@ -23,7 +23,7 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       render :show, locals: { user: @user }, status: :ok
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 
@@ -32,7 +32,7 @@ class UsersController < ApplicationController
     if @user.destroy
       head :no_content
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 

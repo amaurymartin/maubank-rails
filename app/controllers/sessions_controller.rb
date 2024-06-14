@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
     if @access_token.save
       render :create, status: :created
     else
-      render :errors, status: :unprocessable_entity
+      render :errors, status: :unprocessable_content
     end
   end
 

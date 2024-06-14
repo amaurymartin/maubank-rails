@@ -69,7 +69,7 @@ RSpec.describe 'Sessions' do
 
       it :aggregate_failures do
         expect { make_request }.not_to change(AccessToken, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

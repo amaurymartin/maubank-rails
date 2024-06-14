@@ -17,7 +17,7 @@ module Wallets
       if @payment.save
         render 'payments/show', locals: { payment: @payment }, status: :created
       else
-        render 'payments/errors', status: :unprocessable_entity
+        render 'payments/errors', status: :unprocessable_content
       end
     end
 

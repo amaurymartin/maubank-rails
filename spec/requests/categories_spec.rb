@@ -34,7 +34,7 @@ RSpec.describe 'Categories' do
 
       it :aggregate_failures do
         expect { make_request }.not_to change(Category, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response_body[:errors]).not_to be_empty
       end
     end
@@ -48,7 +48,7 @@ RSpec.describe 'Categories' do
 
       it :aggregate_failures do
         expect { make_request }.not_to change(Category, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -225,7 +225,7 @@ RSpec.describe 'Categories' do
       it :aggregate_failures do
         expect { make_request and category.reload }
           .not_to change(category, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response_body[:errors]).not_to be_empty
       end
     end
@@ -262,7 +262,7 @@ RSpec.describe 'Categories' do
       it :aggregate_failures do
         expect { make_request and category.reload }
           .not_to change(category, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -312,7 +312,7 @@ RSpec.describe 'Categories' do
       it :aggregate_failures do
         expect { make_request and category.reload }
           .not_to change(category, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response_body[:errors]).not_to be_empty
       end
     end
@@ -349,7 +349,7 @@ RSpec.describe 'Categories' do
       it :aggregate_failures do
         expect { make_request and category.reload }
           .not_to change(category, :attributes)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -399,7 +399,7 @@ RSpec.describe 'Categories' do
 
       it :aggregate_failures do
         expect { make_request }.not_to change(Category, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
